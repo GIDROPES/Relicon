@@ -33,8 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
         relicon_h = (TextView) findViewById(R.id.relicon_h);
 
-
-
+        //just comment
         back_video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
