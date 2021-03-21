@@ -10,13 +10,16 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 public class MainActivity extends AppCompatActivity {
 
     VideoView back_video;
-    TextView  relicon_h;
+    ImageView relicon_h;
+    Button next;
 
     Animation mFadeInAnim, mFadeOutAnim;
 
@@ -31,8 +34,10 @@ public class MainActivity extends AppCompatActivity {
         back_video.setVideoURI(uri);
         back_video.start();
 
-        relicon_h = (TextView) findViewById(R.id.relicon_h);
+        relicon_h = (ImageView) findViewById(R.id.relicon_h);
 
+        next = (Button) findViewById(R.id.nextToBracletQuestion);
+        next.setBackgroundResource(R.drawable.inset_ripped);
         //just comment
         back_video.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -43,23 +48,14 @@ public class MainActivity extends AppCompatActivity {
 
         mFadeInAnim = AnimationUtils.loadAnimation(this,R.anim.fadein);
         mFadeOutAnim = AnimationUtils.loadAnimation(this,R.anim.fadeout);
-        mFadeInAnim.setAnimationListener(new Animation.AnimationListener() {
-            @Override
-            public void onAnimationStart(Animation animation) {
 
-            }
+        relicon_h.startAnimation(mFadeInAnim);
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
 
-            }
+        next.startAnimation(mFadeInAnim);
+        next.startAnimation(mFadeOutAnim);
+        next.startAnimation(mFadeInAnim);
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
-        });
-        mFadeOutAnim.setAnimationListener(animationFadeOutListener); /////////////////////////////////////////////////////////////////////////////////////////
     }
 
 

@@ -16,28 +16,26 @@
 
 
 
-
-    <TextView
+    <ImageView
         android:id="@+id/relicon_h"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:text="RELICON"
-        android:textStyle="bold"
-        android:textSize="70dp"
-        android:layout_centerVertical="true"
+        android:layout_centerVertical="false"
         android:layout_centerHorizontal="true"
-        android:textColor="@color/light_orange"
-        android:alpha="1"/>
+        app:srcCompat = "@raw/relicon_preview"
+        />
+
+
 
     <Button
+        android:id="@+id/nextToBracletQuestion"
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_below="@+id/relicon_h"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="-30dp"
         android:layout_centerHorizontal="true"
+        android:text="next >"
         android:alpha="0.7"
-        android:background="@color/white"
-        android:text="next"
         android:textColor="@color/black"
         android:textStyle="bold" />
 
