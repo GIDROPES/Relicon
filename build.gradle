@@ -1,12 +1,50 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
+ext{
+    packageName = "com.example.relicon"
+}
+apply plugin: 'com.android.application'
+
+android{
+    compileSdkVersion packageName
+    buildToolsVersion = '31.0.0-rc2'
+
+    defaultConfig {
+        minSdkVersion 21
+        //targetSdkVersion 30
+        versionCode 1000
+        versionName "1.0.0"
+        applicationId 'com.example.relicon'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            applicationIdSuffix packageName
+        }
+    }
+    productFlavors {
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    /*compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_5
+        targetCompatibility JavaVersion.VERSION_1_5
+    }
+    */
+}
+
 buildscript {
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.1'
+        classpath 'com.android.tools.build:gradle:4.1.2'
 
+        //implementation 'com.google.android.gms:play-services-fitness:20.0.0'
+        //implementation 'com.google.android.gms:play-services-auth:19.0.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -19,6 +57,10 @@ allprojects {
     }
 }
 
-task clean(type: Delete) {
+
+
+
+/*task clean(type: Delete) {
     delete rootProject.buildDir
 }
+*/
