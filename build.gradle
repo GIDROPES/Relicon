@@ -4,12 +4,12 @@ ext{
 apply plugin: 'com.android.application'
 
 android{
-    compileSdkVersion 30
+    compileSdkVersion packageName
     buildToolsVersion = '31.0.0-rc2'
 
     defaultConfig {
         minSdkVersion 21
-        targetSdkVersion 30
+        //targetSdkVersion 30
         versionCode 1000
         versionName "1.0.0"
         applicationId 'com.example.relicon'
@@ -28,7 +28,11 @@ android{
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
+    /*compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_5
+        targetCompatibility JavaVersion.VERSION_1_5
+    }
+    */
 }
 
 buildscript {
