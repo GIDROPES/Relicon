@@ -4,12 +4,12 @@ ext{
 apply plugin: 'com.android.application'
 
 android{
-    compileSdkVersion packageName
+    compileSdkVersion 30
     buildToolsVersion = '31.0.0-rc2'
 
     defaultConfig {
         minSdkVersion 21
-        //targetSdkVersion 30
+        targetSdkVersion 30
         versionCode 1000
         versionName "1.0.0"
         applicationId 'com.example.relicon'
@@ -41,7 +41,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.2'
+        classpath 'com.android.tools.build:gradle:4.1.3'
 
         //implementation 'com.google.android.gms:play-services-fitness:20.0.0'
         //implementation 'com.google.android.gms:play-services-auth:19.0.0'

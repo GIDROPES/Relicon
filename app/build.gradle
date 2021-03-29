@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    compileSdkVersion packageName
+    compileSdkVersion 30
     buildToolsVersion "31.0.0-rc2"
 
     defaultConfig {
         applicationId "com.example.relicon"
         minSdkVersion 21
-        //targetSdkVersion 30
+        targetSdkVersion 30
         versionCode 1000
         versionName "1.0.0"
         applicationId 'com.example.relicon'
