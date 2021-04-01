@@ -2,6 +2,8 @@ package com.example.relicon;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -12,7 +14,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity {
+import com.google.android.gms.fitness.FitnessOptions;
+
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     VideoView back_video;
     ImageView relicon_h;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         miband5 = findViewById(R.id.miband5);
         miband5.setVisibility(View.INVISIBLE);
@@ -53,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         comboAnim = AnimationUtils.loadAnimation(this,R.anim.comboanim);
         relicon_h.startAnimation(mFadeInAnim);
 
+        yes_miband5.setBackgroundResource(R.drawable.inset_ripped);
+        no_miband5.setBackgroundResource(R.drawable.inset_ripped);
+
 
         next.startAnimation(mFadeInAnim);
 
@@ -66,6 +74,12 @@ public class MainActivity extends AppCompatActivity {
             info_miband5.startAnimation(comboAnim);
             yes_miband5.setVisibility(View.VISIBLE); no_miband5.setVisibility(View.VISIBLE);
             yes_miband5.startAnimation(mFadeInAnim); no_miband5.startAnimation(mFadeInAnim);
+
+            yes_miband5.setClickable(true);
+            no_miband5.setClickable(true);
+
+            yes_miband5.setOnClickListener(this);
+            no_miband5.setOnClickListener(this);
         });
 
 
@@ -100,5 +114,17 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         back_video.stopPlayback();
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.yes_miband5){
+            Intent intent = new Intent(this, TryingConnectionActivity.class);
+            startActivity(intent);
+        }
+        if (v.getId() == R.id.no_miband5){
+            Intent intent2 = new Intent(this, SleepCountChanger.class);
+            startActivity(intent2);
+        }
     }
 }

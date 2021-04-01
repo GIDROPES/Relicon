@@ -12,7 +12,9 @@ android {
         targetSdkVersion 30
         versionCode 1000
         versionName "1.0.0"
-        applicationId 'com.example.relicon'
+        applicationId packageName
+        applicationIdSuffix packageName
+        versionNameSuffix packageName
     }
 
     buildTypes {
@@ -20,6 +22,7 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             applicationIdSuffix packageName
+            versionNameSuffix packageName
         }
     }
     productFlavors {
