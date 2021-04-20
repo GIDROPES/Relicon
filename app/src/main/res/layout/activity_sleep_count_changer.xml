@@ -10,18 +10,52 @@
         android:layout_height = "wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentTop="true"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Выберите режим высчитывания сна"
+        android:text="Сколько вы обычно спите?"
         android:layout_alignParentTop="true"
         android:layout_marginTop="120dp"
         android:textColor="@color/white"
         android:textSize="20sp"
         />
 
+    <Button
+        android:id="@+id/toMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="550dp"
+        android:text="OK" />
+
+    <TextView
+        android:alpha="0.8"
+        android:id="@+id/defaultSleep"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="390dp"
+        android:textColor="@color/white"
+        android:textSize="50sp"
+        />
+
+    <SeekBar
+        android:progressBackgroundTint="@color/light_orange"
+        android:progress="8"
+        android:id="@+id/seekBar"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="300dp"
+        android:layout_centerHorizontal="true"
+        android:max="12"
+        android:outlineAmbientShadowColor="@color/white"
+        android:outlineSpotShadowColor="@color/white" />
 
 </RelativeLayout>

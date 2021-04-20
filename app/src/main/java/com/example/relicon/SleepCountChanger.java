@@ -2,12 +2,19 @@ package com.example.relicon;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.VideoView;
 
-public class SleepCountChanger extends AppCompatActivity {
+public class SleepCountChanger extends AppCompatActivity implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
     VideoView back_video;
+    Button toMenu; TextView tw;
+    SeekBar seekBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,6 +27,15 @@ public class SleepCountChanger extends AppCompatActivity {
         back_video.start();
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
 
+        toMenu = (Button) findViewById(R.id.toMenu);
+        toMenu.setOnClickListener(this);
+        toMenu.setBackgroundResource(R.drawable.inset_ripped);
+
+        seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setBackgroundResource(R.drawable.inset_ripped);
+        seekBar.setOnSeekBarChangeListener(this);
+        tw = (TextView) findViewById(R.id.defaultSleep);
+        tw.setText(String.valueOf(seekBar.getProgress()));
     }
 
     @Override
@@ -44,5 +60,28 @@ public class SleepCountChanger extends AppCompatActivity {
     protected void onDestroy() {
         back_video.stopPlayback();
         super.onDestroy();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.toMenu){
+            Intent intent = new Intent(this, MenuActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        tw.setText(String.valueOf(seekBar.getProgress()));
     }
 }
