@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,14 +35,26 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
 
         sleepInfo = (TextView) findViewById(R.id.sleepInfo);
-
+        
         SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
-        if (sp.contains(MainActivity.APP_PREFERENCES_HAS_BRACELET)){
+        String inf = sp.getString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,"");
 
+        if (sp.contains(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP)){
+            if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Default")) {
+                sleepInfo.setText("Вы спали ~ " + inf + " часов");
+            }
+            if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Less")) {
+                sleepInfo.setText("Вы спали меньше " + inf + " часов");
+                sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
+            }
+            if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("More")) {
+                sleepInfo.setText("Вы спали больше " + inf + " часов");
+                sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
+            }
         }
-        else {
-            sleepInfo.setText("Вы спали " + sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP, "0" + " часов"));
-        }
+        //sleepInfo.setText(inf);
+        //sleepInfo.setText("Вы спали " + sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP, "0" + " часов"));
+
         /*proection_icon = (ImageButton) findViewById(R.id.proection_icon);
         Uri uriIcon1 = Uri.parse(path + getPackageName() + "/" + R.drawable.proection_icon);
         proection_icon.setImageURI(uriIcon1);

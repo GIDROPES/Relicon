@@ -9,5 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="khaki">#F0E68C</color>
     <color name="light_orange">#FFA07A</color>
-
+    <color name="bad_red">#DC143C</color>
 </resources>

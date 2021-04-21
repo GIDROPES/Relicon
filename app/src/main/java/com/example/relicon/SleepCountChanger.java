@@ -23,8 +23,6 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep_count_changer);
 
-        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-        Log.d("Вывело",sharedPreferences.getString(MainActivity.APP_PREFERENCES_HAS_BRACELET, "aa"));
         back_video = findViewById(R.id.back_video);
         String path = "android.resource://";
         Uri uri = Uri.parse(path + getPackageName() + "/" + R.raw.space_background);
@@ -71,6 +69,7 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         if (v.getId() == R.id.toMenu){
             Intent intent = new Intent(this, MenuActivity.class);
+
             startActivity(intent);
         }
     }
@@ -88,5 +87,11 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         tw.setText(String.valueOf(seekBar.getProgress()));
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,String.valueOf(seekBar.getProgress()));
+        editor.apply();
+        editor.putString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"Default");
+        editor.apply();
     }
 }
