@@ -116,4 +116,14 @@
         android:textAlignment="center"
         android:textSize="10sp" />
 
+    <TextView
+        android:id="@+id/sleepInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="657dp"
+        android:layout_marginEnd="17dp"
+         />
+
 </RelativeLayout>

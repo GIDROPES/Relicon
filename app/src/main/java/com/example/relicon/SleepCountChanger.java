@@ -3,8 +3,10 @@ package com.example.relicon;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.SeekBar;
@@ -15,11 +17,14 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
     VideoView back_video;
     Button toMenu; TextView tw;
     SeekBar seekBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep_count_changer);
 
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+        Log.d("Вывело",sharedPreferences.getString(MainActivity.APP_PREFERENCES_HAS_BRACELET, "aa"));
         back_video = findViewById(R.id.back_video);
         String path = "android.resource://";
         Uri uri = Uri.parse(path + getPackageName() + "/" + R.raw.space_background);

@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -25,10 +26,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView miband5;
     Animation mFadeInAnim, mFadeOutAnim, comboAnim;
 
+    public static final String APP_PREFERENCES = "sleeperdata";
+    public static final String APP_PREFERENCES_DEFAULT_SLEEP = "DefaultSleepCount";
+    public static final String APP_PREFERENCES_HAS_BRACELET = "HasBracelet";
+    public static final String APP_PREFERENCES_TODAY_SLEEP = "SleepTimeToday";
+
+    SharedPreferences myData;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
 
 
         miband5 = findViewById(R.id.miband5);
@@ -50,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         next = findViewById(R.id.nextToBracletQuestion);
         next.setBackgroundResource(R.drawable.inset_ripped);
-        //just comment
+
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
 
         mFadeInAnim = AnimationUtils.loadAnimation(this,R.anim.fadein);
@@ -63,25 +73,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         next.startAnimation(mFadeInAnim);
+        next.setOnClickListener(this);
+        /*next.setOnClickListener(v -> {
+            if(!myData.contains(APP_PREFERENCES_HAS_BRACELET)) {
+                reliconAnimatorStart();
+                miband5.setVisibility(View.VISIBLE);
+                miband5.startAnimation(comboAnim);
+                next.startAnimation(mFadeOutAnim);
+                next.setVisibility(View.INVISIBLE);
+                info_miband5.setVisibility(View.VISIBLE);
+                info_miband5.startAnimation(comboAnim);
+                yes_miband5.setVisibility(View.VISIBLE);
+                no_miband5.setVisibility(View.VISIBLE);
+                yes_miband5.startAnimation(mFadeInAnim);
+                no_miband5.startAnimation(mFadeInAnim);
 
-        next.setOnClickListener(v -> {
-            reliconAnimatorStart();
-            miband5.setVisibility(View.VISIBLE);
-            miband5.startAnimation(comboAnim);
-            next.startAnimation(mFadeOutAnim);
-            next.setVisibility(View.INVISIBLE);
-            info_miband5.setVisibility(View.VISIBLE);
-            info_miband5.startAnimation(comboAnim);
-            yes_miband5.setVisibility(View.VISIBLE); no_miband5.setVisibility(View.VISIBLE);
-            yes_miband5.startAnimation(mFadeInAnim); no_miband5.startAnimation(mFadeInAnim);
+                yes_miband5.setClickable(true);
+                no_miband5.setClickable(true);
 
-            yes_miband5.setClickable(true);
-            no_miband5.setClickable(true);
-
-            yes_miband5.setOnClickListener(this);
-            no_miband5.setOnClickListener(this);
+                yes_miband5.setOnClickListener(this);
+                no_miband5.setOnClickListener(this);
+            }
+            else {
+                Intent intent = new Intent(this, TodaySleepHours.class);
+                startActivity(intent);
+            }
         });
-
+            */
 
     }
 
@@ -118,12 +136,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+        myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        String info = myData.getString(APP_PREFERENCES_HAS_BRACELET,"");
+        if (v.getId() == R.id.nextToBracletQuestion){
+            if(!myData.contains(APP_PREFERENCES_HAS_BRACELET)) {
+                reliconAnimatorStart();
+                miband5.setVisibility(View.VISIBLE);
+                miband5.startAnimation(comboAnim);
+                next.startAnimation(mFadeOutAnim);
+                next.setVisibility(View.INVISIBLE);
+                info_miband5.setVisibility(View.VISIBLE);
+                info_miband5.startAnimation(comboAnim);
+                yes_miband5.setVisibility(View.VISIBLE);
+                no_miband5.setVisibility(View.VISIBLE);
+                yes_miband5.startAnimation(mFadeInAnim);
+                no_miband5.startAnimation(mFadeInAnim);
+
+                yes_miband5.setClickable(true);
+                no_miband5.setClickable(true);
+
+                yes_miband5.setOnClickListener(this);
+                no_miband5.setOnClickListener(this);
+            }
+            else {
+                Intent intent = new Intent(this, TodaySleepHours.class);
+                startActivity(intent);
+            }
+        }
+
         if (v.getId() == R.id.yes_miband5){
             Intent intent = new Intent(this, TryingConnectionActivity.class);
+
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(APP_PREFERENCES_HAS_BRACELET,"YES");
+            editor.apply();
+
             startActivity(intent);
         }
         if (v.getId() == R.id.no_miband5){
             Intent intent2 = new Intent(this, SleepCountChanger.class);
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(APP_PREFERENCES_HAS_BRACELET,"NO");
+            editor.apply();
             startActivity(intent2);
         }
     }

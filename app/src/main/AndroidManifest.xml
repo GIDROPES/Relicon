@@ -17,7 +17,9 @@
         android:theme="@style/Theme.Relicon.Fullscreen"
         android:versionCode="1000"
         android:versionName="1.0.0">
-        <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".ExtraActivity"></activity>
+        <activity android:name=".TodaySleepHours" />
+        <activity android:name=".MenuActivity" />
         <activity android:name=".SleepCountChanger" />
         <activity android:name=".TryingConnectionActivity" />
         <activity android:name=".MainActivity">
