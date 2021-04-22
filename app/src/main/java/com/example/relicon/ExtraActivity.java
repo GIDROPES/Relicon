@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
@@ -32,8 +33,10 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
         if (v.getId() == R.id.clear){
             SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.remove(MainActivity.APP_PREFERENCES_HAS_BRACELET);
+            editor.clear();
             editor.apply();
+            Toast toast = Toast.makeText(this,"Перезагрузите приложение", Toast.LENGTH_LONG);
+            toast.show();
         }
     }
 }

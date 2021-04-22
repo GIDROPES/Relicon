@@ -24,9 +24,9 @@
         android:textColor="@color/white"
         />
 
-    <ImageButton
+    <ImageView
         android:alpha="0.7"
-        android:id="@+id/proection_icon"
+        android:id="@+id/proection_mode_butt"
         android:layout_width="117dp"
         android:layout_height="118dp"
         android:scaleType="fitXY"
@@ -37,9 +37,9 @@
         android:layout_marginTop="228dp"
         android:background="@null"
         />
-    <ImageButton
+    <ImageView
         android:alpha="0.7"
-        android:id="@+id/sleep_control_icon"
+        android:id="@+id/sleep_control_butt"
         android:layout_width="117dp"
         android:layout_height="118dp"
         android:scaleType="fitXY"
@@ -50,9 +50,9 @@
         android:layout_marginTop="228dp"
         android:background="@null"/>
 
-    <ImageButton
+    <ImageView
         android:alpha="0.7"
-        android:id="@+id/multi_icon"
+        android:id="@+id/multi_butt"
         android:layout_width="172dp"
         android:layout_height="136dp"
         android:layout_alignParentTop="true"
@@ -63,11 +63,12 @@
         android:background="@null"/>
 
     <TextView
+        android:id="@+id/proection_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/proection_icon"
-        android:layout_alignStart="@+id/proection_icon"
-        android:layout_alignEnd="@+id/proection_icon"
+        android:layout_above="@+id/proection_mode_butt"
+        android:layout_alignStart="@+id/proection_mode_butt"
+        android:layout_alignEnd="@+id/proection_mode_butt"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="-220dp"
@@ -79,9 +80,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/sleep_control_icon"
-        android:layout_alignStart="@+id/sleep_control_icon"
-        android:layout_alignEnd="@+id/sleep_control_icon"
+        android:layout_above="@+id/sleep_control_butt"
+        android:layout_alignStart="@+id/sleep_control_butt"
+        android:layout_alignEnd="@+id/sleep_control_butt"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="-220dp"
@@ -93,9 +94,9 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/multi_icon"
-        android:layout_alignStart="@+id/multi_icon"
-        android:layout_alignEnd="@+id/multi_icon"
+        android:layout_above="@+id/multi_butt"
+        android:layout_alignStart="@+id/multi_butt"
+        android:layout_alignEnd="@+id/multi_butt"
         android:layout_marginStart="0dp"
         android:layout_marginEnd="0dp"
         android:layout_marginBottom="-420dp"
