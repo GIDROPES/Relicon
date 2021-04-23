@@ -17,12 +17,18 @@ import android.widget.Toast;
 public class ProectionMode extends AppCompatActivity implements LocationListener {
 
     private LocationManager locationManager;
-    private TextView speedValue;
+    private TextView speedValue, kmh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proection_mode);
+
+        speedValue = (TextView) findViewById(R.id.speedValue);
+        kmh = (TextView) findViewById(R.id.kmh);
+
+        speedValue.setRotationY(-180f);
+        kmh.setRotationY(-180f);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
@@ -55,8 +61,11 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         if (location == null) {
             speedValue.setText("-");
         } else {
-            float currentSpeed = location.getSpeed() * 3.6f;
-            speedValue.setText(String.format("%.2f", currentSpeed));
+            float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
+            int roundedCurrentSpeed = (int) currentSpeed;
+            if (roundedCurrentSpeed < 9 ) speedValue.setText(String.valueOf(0));
+                //speedValue.setText(String.format("%.2f", currentSpeed));
+            else speedValue.setText(String.valueOf(roundedCurrentSpeed));
         }
     }
 
@@ -72,13 +81,14 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                 //                                          int[] grantResults)
                 // to handle the case where the user grants the permission. See the documentation
                 // for ActivityCompat#requestPermissions for more details.
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
                 return;
             }
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             //commented, this is from the old version
-            // this.onLocationChanged(null);
+            
         }
-        Toast.makeText(this,"Waiting for GPS connection!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,"Подключение может занять несколько минут", Toast.LENGTH_LONG).show();
 
 
     }

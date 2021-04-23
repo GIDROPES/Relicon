@@ -12,10 +12,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptionsExtension;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.FitnessOptions;
@@ -76,7 +78,7 @@ public class TryingConnectionActivity extends AppCompatActivity {
             accessGoogleFit();
         }
 
-
+       // if (Google)
     }
 
     @Override
@@ -84,10 +86,15 @@ public class TryingConnectionActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE) accessGoogleFit();
+            if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE){
+                accessGoogleFit();
+                Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
+                startActivity(intent);
+            }
         } else {
             Log.d("TAGgag", "FAIL");
             Log.d("TAGgag", String.valueOf(requestCode));
+            Toast.makeText(this,"Не удалось подключиться",Toast.LENGTH_SHORT).show();
         }
     }
 
