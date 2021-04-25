@@ -54,6 +54,15 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        sleep_control_butt = (ImageView) findViewById(R.id.sleep_control_butt);
+        sleep_control_butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, SleepControlMode.class);
+                startActivity(intent);
+            }
+        });
+
         StrangeTask strangeTask = new StrangeTask();
         strangeTask.execute();
 

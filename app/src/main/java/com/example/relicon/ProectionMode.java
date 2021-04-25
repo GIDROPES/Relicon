@@ -90,7 +90,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         }
         Toast.makeText(this,"Подключение может занять несколько минут", Toast.LENGTH_LONG).show();
 
-
     }
 
     @Override

@@ -86,11 +86,11 @@ public class TryingConnectionActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE){
+            if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
                 accessGoogleFit();
-                Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
-                startActivity(intent);
-            }
+                //Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
+                //startActivity(intent);
+            
         } else {
             Log.d("TAGgag", "FAIL");
             Log.d("TAGgag", String.valueOf(requestCode));
