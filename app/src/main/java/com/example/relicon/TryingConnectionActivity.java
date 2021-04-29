@@ -4,8 +4,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static java.text.DateFormat.getTimeInstance;
+import android.annotation.SuppressLint;
+import com.google.android.gms.fitness.data.Session;
+import com.google.android.gms.fitness.request.SessionReadRequest;
+import java.text.DateFormat;
+
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -63,7 +71,9 @@ public class TryingConnectionActivity extends AppCompatActivity {
         ////////////////////////////////////////////////////////////////////////////
 
         fitnessOptions = FitnessOptions.builder()
+                .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.TYPE_SLEEP_SEGMENT, FitnessOptions.ACCESS_READ)
+                .addDataType(DataType.TYPE_ACTIVITY_SEGMENT, FitnessOptions.ACCESS_READ)
                 .build();
 
         account = GoogleSignIn.getAccountForExtension(this, fitnessOptions);
@@ -88,8 +98,14 @@ public class TryingConnectionActivity extends AppCompatActivity {
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == GOOGLE_FIT_PERMISSIONS_REQUEST_CODE)
                 accessGoogleFit();
-                //Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
-                //startActivity(intent);
+            SharedPreferences myData;
+            myData = getSharedPreferences(MainActivity.APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(MainActivity.APP_PREFERENCES_HAS_BRACELET,"YES");
+            editor.apply();
+
+                Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
+                startActivity(intent);
             
         } else {
             Log.d("TAGgag", "FAIL");
@@ -150,5 +166,4 @@ public class TryingConnectionActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> textView.setText("Таких данных нет"));
     }
-
 }

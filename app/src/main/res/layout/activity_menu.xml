@@ -121,11 +121,11 @@
         android:id="@+id/sleepInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:textColor="@color/white"
-        android:layout_marginTop="657dp"
-        android:layout_marginEnd="17dp"
-         />
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="39dp"
+        android:layout_marginBottom="22dp"
+        android:text="aaaaaaaaaa"
+        android:textColor="@color/white" />
 
 </RelativeLayout>

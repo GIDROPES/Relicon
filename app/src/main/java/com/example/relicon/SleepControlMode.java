@@ -7,6 +7,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.google.android.gms.tasks.Task;
@@ -16,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SleepControlMode extends AppCompatActivity {
     public static MediaPlayer mediaPlayer;
-    VideoView back_video;
+    VideoView back_video; TextView wakeup;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,17 +32,40 @@ public class SleepControlMode extends AppCompatActivity {
         back_video.start();
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
         SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
-            soundPlayingTask.execute();
+        soundPlayingTask.execute();
+
 
     }
 
     class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
-        Integer sounds[] = {R.raw.sound1, R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound5};
+
+        String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны","Не спать"};
+        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound5};
         int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
         int exit = 0;
+        Random random = new Random();
+        int index = random.nextInt(wakeupPhrases.length);
+
         @Override
         protected Void doInBackground(Void... voids) {
+
+
+            Animation mFadeInAnim, mFadeOutAnim;
+            wakeup = (TextView) findViewById(R.id.wakeup);
+            int exit = 0;
+            mFadeInAnim = AnimationUtils.loadAnimation(SleepControlMode.this,R.anim.fadein);
+            mFadeOutAnim = AnimationUtils.loadAnimation(SleepControlMode.this,R.anim.fadeout);
+
+            wakeup.setText( wakeupPhrases[ index ] );
+
             while (true) {
+                wakeup.startAnimation(mFadeInAnim);
+                wakeup.startAnimation(mFadeOutAnim);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Random randomS = new Random();
                 Random randomT = new Random();
                 mediaPlayer = MediaPlayer.create(SleepControlMode.this, sounds[randomS.nextInt(sounds.length)]);
@@ -54,6 +80,7 @@ public class SleepControlMode extends AppCompatActivity {
             return null;
         }
     }
+
 
     @Override
     protected void onStart() {

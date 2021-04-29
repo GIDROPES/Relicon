@@ -26,10 +26,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ImageView miband5;
     Animation mFadeInAnim, mFadeOutAnim, comboAnim;
 
-    public static final String APP_PREFERENCES = "sleeperdata";
-    public static final String APP_PREFERENCES_DEFAULT_SLEEP = "DefaultSleepCount";
-    public static final String APP_PREFERENCES_HAS_BRACELET = "HasBracelet";
-    public static final String APP_PREFERENCES_TODAY_SLEEP = "SleepTimeToday";
+    public static final String APP_PREFERENCES = "sleeperdata";              //название файла
+    public static final String APP_PREFERENCES_DEFAULT_SLEEP = "DefaultSleepCount";   //значение сна по умолчанию
+    public static final String APP_PREFERENCES_HAS_BRACELET = "HasBracelet";        //наличие браслета
+    public static final String APP_PREFERENCES_TODAY_SLEEP = "SleepTimeToday";     //сон в конкретно сегодняшний день
+    public static final String APP_PREFERENCES_BRACELET_SLEEP_CHECK = "BraceleteSleepTimeToday";     //сон в конкретно сегодняшний день по браслету
+
 
     SharedPreferences myData;
 
@@ -159,17 +161,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 no_miband5.setOnClickListener(this);
             }
             else {
-                Intent intent = new Intent(this, TodaySleepHours.class);
-                startActivity(intent);
+                if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("YES")){
+                    Intent intent = new Intent(this, BraceletReadSleep.class);
+                    startActivity(intent);
+                }
+                if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("NO")) {
+                    Intent intent = new Intent(this, TodaySleepHours.class);
+                    startActivity(intent);
+                }
             }
         }
 
         if (v.getId() == R.id.yes_miband5){
             Intent intent = new Intent(this, TryingConnectionActivity.class);
-
-            SharedPreferences.Editor editor = myData.edit();
-            editor.putString(APP_PREFERENCES_HAS_BRACELET,"YES");
-            editor.apply();
 
             startActivity(intent);
         }
