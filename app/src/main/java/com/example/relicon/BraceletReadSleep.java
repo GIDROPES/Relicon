@@ -49,17 +49,18 @@ public class BraceletReadSleep extends AppCompatActivity {
             SharedPreferences.Editor editor = data.edit();
 
             editor.putString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK, TryingConnectionActivity.SLEEP_GOOGLE_FIT_HOURS); //Сделали запись с информацией по сегодняшнему сну из гугл фита
+            editor.apply();
 
             for(int i =0; i < 2; i++){
                 sleepCount.startAnimation(mFadeInAnim);
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1500);
-                } catch (InterruptedException e) {
+                try {                                                   //этот блок кода
+                    TimeUnit.MILLISECONDS.sleep(1500);            //показывает надпись о том, сколько мы спали
+                } catch (InterruptedException e) {                         //два раза
                     e.printStackTrace();
                 }
                 sleepCount.startAnimation(mFadeOutAnim);
             }
-            BraceletReadSleep.this.startActivity(intent);
+            BraceletReadSleep.this.startActivity(intent);                  //переход в меню
             return null;
         }
     }

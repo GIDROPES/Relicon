@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    
     <VideoView
         android:id="@+id/back_video"
         android:layout_width="900dp"
@@ -45,7 +45,7 @@
         android:textColor="@color/white"
         android:textSize="14sp" />
 
-    <Button
+    <CheckBox
         android:id="@+id/toMirror"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
         android:layout_alignParentEnd="true"
         android:layout_marginTop="117dp"
         android:layout_marginEnd="9dp"
-        android:text="ОТЗЕРКАЛИТЬ"
-
+        android:outlineAmbientShadowColor="@color/white"
+        android:outlineSpotShadowColor="@color/white"
         />
 </RelativeLayout>

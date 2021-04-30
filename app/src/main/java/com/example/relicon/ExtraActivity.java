@@ -8,11 +8,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
-    VideoView back_video; Button clear, toMirror;
+    VideoView back_video; Button clear; CheckBox toMirror;
     public static int now = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +30,20 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         clear = (Button) findViewById(R.id.clear); clear.setBackgroundResource(R.drawable.inset_ripped);
         clear.setOnClickListener(this);
 
-        toMirror = (Button) findViewById(R.id.toMirror); toMirror.setBackgroundResource(R.drawable.inset_ripped);
+        toMirror = (CheckBox) findViewById(R.id.toMirror); toMirror.setBackgroundResource(R.drawable.inset_ripped);
         toMirror.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (now == 0) {
-                    ProectionMode.normalRotationMode = 1; now++;
+
+                SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+                SharedPreferences.Editor editor = sp.edit();
+
+                if (toMirror.isEnabled()) {
+                    editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"0");
+                    editor.apply();
                 }
-                else { ProectionMode.normalRotationMode = 0; now--; }
+                else { editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"1");
+                    editor.apply(); }
             }
         });
     }
