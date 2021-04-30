@@ -50,6 +50,7 @@
         android:layout_marginBottom="28dp" />
 
     <TextView
+        android:id="@+id/littleInf"
         android:layout_width="215dp"
         android:layout_height="46dp"
         android:layout_alignParentEnd="true"
@@ -61,5 +62,15 @@
         android:text="Вы можете отразить скорость в блоке 'Дополнительное' в Главном Меню"
         android:textColor="@color/white"
         android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/wakeup2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/littleInf"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="69dp"
+        android:text=""
+        android:textColor="@color/white" />
 
 </RelativeLayout>

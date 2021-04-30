@@ -45,6 +45,16 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         extra = (Button) findViewById(R.id.extra);
         extra.setBackgroundResource(R.drawable.inset_ripped); extra.setOnClickListener(this);
 
+        multi_butt = (ImageView) findViewById(R.id.multi_butt);
+        multi_butt.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, ProectionMode.class);
+                ProectionMode.MULTI_MODE = 1;
+                MenuActivity.this.startActivity(intent);
+            }
+        });
+
         proection_butt = (ImageView) findViewById(R.id.proection_mode_butt);
         proection_butt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,6 +102,24 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                     sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
                 }
             }
+            if (sp.contains(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK)){
+                String infGoogleFitSleep = MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK;
+                Long GFSleepHours = Long.parseLong(infGoogleFitSleep);
+
+                if (GFSleepHours < 8 && GFSleepHours > 5){
+                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                    sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
+                }
+                if (GFSleepHours <= 5 ){
+                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                    sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
+                }
+                if (GFSleepHours >= 8 ){
+                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                    sleepInfo.setTextColor(getResources().getColor(R.color.white));
+                }
+            }
+
             return null;
         }
     }

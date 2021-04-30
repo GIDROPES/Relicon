@@ -15,18 +15,23 @@ import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 public class ProectionMode extends AppCompatActivity implements LocationListener {
 
     private LocationManager locationManager;
-    private TextView speedValue, kmh;
+    private TextView speedValue, kmh, wakeup;
     int roundedCurrentSpeed;
     public static int normalRotationMode = 0;
     private Button backToMenu;
-
+    public static int MULTI_MODE;
     int countSound40 = 0; int countSound60 = 0; int countSound90 = 0; int countSount110 = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +60,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
             //start the program if permission is granted
             doStuff();
-
+            if (MULTI_MODE == 1){ SoundPlayingTask soundPlayingTask = new SoundPlayingTask(); soundPlayingTask.execute(); }
 
         }
 
@@ -94,14 +99,56 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         }
     }
 
+    class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
+
+        String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны","Не спать"};
+        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound5};
+        int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
+        int exit = 0;
+        Random random = new Random();
+        int index = random.nextInt(wakeupPhrases.length);
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            MediaPlayer mediaPlayer;
+            Animation mFadeInAnim, mFadeOutAnim;
+            wakeup = (TextView) findViewById(R.id.wakeup2);
+            int exit = 0;
+            mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
+            mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
+
+            wakeup.setText( wakeupPhrases[ index ] );
+
+            while (true) {
+                wakeup.startAnimation(mFadeInAnim);
+                wakeup.startAnimation(mFadeOutAnim);
+                try {
+                    TimeUnit.MILLISECONDS.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Random randomS = new Random();
+                Random randomT = new Random();
+                mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[randomS.nextInt(sounds.length)]);
+                mediaPlayer.start();
+                try {
+                    TimeUnit.MILLISECONDS.sleep((times[randomT.nextInt(times.length)]));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (exit == 1) break;
+            }
+            return null;
+        }
+    }
+
     class SoundNotif extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {
             MediaPlayer mp;
-            int exit = 0;
-
-            while (true) {
+            //int exit = 0;
                 if (roundedCurrentSpeed <= 39) {
                     countSound40 = 0;
                     countSound60 = 0;
@@ -124,6 +171,16 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                     countSound90 = 0;
                     countSount110 = 0;
                 }
+
+                ////////блок обновлений////////
+
+                if (roundedCurrentSpeed < 58 && roundedCurrentSpeed > 54){ countSound60 = 0; }
+                if (roundedCurrentSpeed < 88 && roundedCurrentSpeed > 84){ countSound90 = 0; }
+                if (roundedCurrentSpeed < 38 && roundedCurrentSpeed > 34){ countSound40 = 0; }
+                if (roundedCurrentSpeed < 108 && roundedCurrentSpeed >104){ countSount110 = 0; }
+
+                //////////////////////////////
+
                 if (roundedCurrentSpeed >= 90 && roundedCurrentSpeed <= 109 && countSound90 == 0)
                 {
                     mp = MediaPlayer.create(ProectionMode.this, R.raw.speed90);
@@ -137,14 +194,11 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                     mp.start();
                     countSount110 = 1;
                 }
-
-                if (exit == 1) break;
-            }
             return null;
         }
     }
 
-
+    
     private void doStuff() {
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 

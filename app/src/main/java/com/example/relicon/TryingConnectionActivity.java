@@ -54,6 +54,8 @@ public class TryingConnectionActivity extends AppCompatActivity {
     private TextView textView;
     private GoogleSignInAccount account;
     private float sleepHours = 0;
+    public static String SLEEP_GOOGLE_FIT_HOURS;
+
 
     VideoView back_video;
     @Override
@@ -139,31 +141,49 @@ public class TryingConnectionActivity extends AppCompatActivity {
 
     private void accessGoogleFit() {
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        long stop = calendar.getTimeInMillis();
-        calendar.add(Calendar.HOUR_OF_DAY, -24);
+        // Берем данные за прошедший день
+        Calendar cal = Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        long endTime = cal.getTimeInMillis();
+        cal.add(Calendar.DAY_OF_WEEK, -1);
+        long startTime = cal.getTimeInMillis();
 
-        long start = calendar.getTimeInMillis();
-        Log.d("TAGgag", "In methods");
-        DataReadRequest dataReadRequest = new DataReadRequest.Builder()
+        // создаем подключение в виде сессии (не знаю чем отличается от простого запроса данных)
+        SessionReadRequest request = new SessionReadRequest.Builder()
+                .readSessionsFromAllApps()
+                // By default, only activity sessions are included, so it is necessary to explicitly
+                // request sleep sessions. This will cause activity sessions to be *excluded*.
+                .includeSleepSessions()
+                // Sleep segment data is required for details of the fine-granularity sleep, if it is present.
                 .read(DataType.TYPE_SLEEP_SEGMENT)
-                .bucketByActivityType(1, TimeUnit.DAYS)
-                .setTimeRange(start, stop, TimeUnit.MILLISECONDS)
+                .setTimeInterval(startTime, endTime, TimeUnit.MILLISECONDS)
                 .build();
 
-        Fitness.getHistoryClient(this, account)
-                .readData(dataReadRequest)
-                .addOnSuccessListener(response -> {
+        // регистрируем сессию подключения для апи
+        Session session = new Session.Builder()
+                .setName("sessionName")
+                .setIdentifier("identifier")
+                .setDescription("description")
+                .setStartTime(startTime, TimeUnit.MILLISECONDS)
+                .build();
 
-                    long startH = response.getBuckets().get(0).getStartTime(TimeUnit.HOURS);
-                    long endH = response.getBuckets().get(0).getEndTime(TimeUnit.HOURS);
-                    sleepHours += (startH - endH);
+        // стартуем сессию
+        Fitness.getSessionsClient(this, account).startSession(session).addOnFailureListener(e -> Log.i("TAG", "Session" + e.getMessage()));
 
-
-                    textView.setText(String.valueOf(sleepHours));
-                    Log.d("TAGgag", String.valueOf(response.getDataSet(DataType.TYPE_SLEEP_SEGMENT)));
-                })
-                .addOnFailureListener(e -> textView.setText("Таких данных нет"));
+        // Запрашиваем данные
+        Fitness.getSessionsClient(this, account).readSession(request).addOnSuccessListener(sessionReadResponse -> {
+            for (Session ses : sessionReadResponse.getSessions()) {
+                long sessionStart = ses.getStartTime(TimeUnit.MILLISECONDS);
+                long sessionEnd = ses.getEndTime(TimeUnit.MILLISECONDS);
+                long sessionSleepTime = sessionEnd - sessionStart;
+                // переводим миллисекунды в часы
+                // https://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
+                String hours = String.format("%d hour", TimeUnit.MILLISECONDS.toHours(sessionSleepTime));
+                Log.i("TAG", hours);
+                //textView.setText(hours);
+                SLEEP_GOOGLE_FIT_HOURS = hours;
+            }
+        }).addOnFailureListener(e -> Log.i("TAG", e.getMessage()));
     }
 }
