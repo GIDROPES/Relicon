@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="RoundedCornerButton" parent="@style/Widget.AppCompat.Button.Colored">
         <item name="background">@drawable/inset_ripped</item>
         <item name="colorButtonNormal">#FFEFD5</item>
         <item name="colorControlHighlight">#000000</item>
     </style>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.Light">
+        <item name="colorControlNormal">@color/light_orange</item>
+        <item name="colorControlActivated">@color/light_orange</item>
+    </style>
+
 </resources>

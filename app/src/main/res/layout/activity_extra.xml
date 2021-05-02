@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    
+
     <VideoView
         android:id="@+id/back_video"
         android:layout_width="900dp"
@@ -24,23 +24,28 @@
 
     <TextView
         android:id="@+id/ihavebracelete"
-        android:layout_width="258dp"
-        android:layout_height="53dp"
+        android:layout_width="251dp"
+        android:layout_height="48dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="27dp"
         android:layout_marginTop="35dp"
+        android:layout_marginEnd="27dp"
+        android:layout_toStartOf="@+id/clear"
         android:text="Появился браслет? Очистите первоначальный выбор"
         android:textColor="@color/white"
         android:textSize="14sp" />
 
     <TextView
+        android:id="@+id/rotationSpeed"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ihavebracelete"
         android:layout_alignParentStart="true"
         android:layout_marginStart="27dp"
         android:layout_marginTop="30dp"
+        android:layout_marginEnd="114dp"
+        android:layout_toStartOf="@+id/toMirror"
         android:text="Отзеркалить показатель скорости"
         android:textColor="@color/white"
         android:textSize="14sp" />
@@ -51,9 +56,40 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="117dp"
-        android:layout_marginEnd="9dp"
-        android:outlineAmbientShadowColor="@color/white"
-        android:outlineSpotShadowColor="@color/white"
+        android:layout_marginTop="118dp"
+        android:layout_marginEnd="69dp"
+        android:theme="@style/MyCheckBox" />
+
+    <TextView
+        android:id="@+id/changeSound"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/rotationSpeed"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="30dp"
+        android:text="Выбрать звук контроля сна"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+    <Spinner
+        android:id="@+id/soundsSpinner"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toMirror"
+        android:layout_marginStart="69dp"
+        android:layout_marginTop="30dp"
+        android:layout_toEndOf="@+id/changeSound"
+        android:entries="@array/sounds"
         />
+
+    <Button
+        android:id="@+id/saveToMenu"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginBottom="30dp"
+        android:text="СОХРАНИТЬ И В МЕНЮ"/>
 </RelativeLayout>

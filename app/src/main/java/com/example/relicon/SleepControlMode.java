@@ -40,7 +40,7 @@ public class SleepControlMode extends AppCompatActivity {
     class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
 
         String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны","Не спать"};
-        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound5};
+        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
         int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
         int exit = 0;
         Random random = new Random();

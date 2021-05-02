@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.view.animation.Animation;
@@ -137,9 +138,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
+    class noBracelet extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor2 = myData.edit();
+            editor2.putString(APP_PREFERENCES_HAS_BRACELET,"NO");
+            editor2.apply();
+
+            return null;
+        }
+    }
+
+    class setRotation extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(APP_PREFERENCES_ROTATION_NORMAL,"0");
+            editor.apply();
+            return null;
+        }
+    }
+
+    class yesBracelet extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor2 = myData.edit();
+            editor2.putString(APP_PREFERENCES_HAS_BRACELET,"YES");
+            editor2.apply();
+            return null;
+        }
+    }
+
     @Override
     public void onClick(View v) {
         myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = myData.edit();
         String info = myData.getString(APP_PREFERENCES_HAS_BRACELET,"");
         if (v.getId() == R.id.nextToBracletQuestion){
             if(!myData.contains(APP_PREFERENCES_HAS_BRACELET)) {
@@ -154,7 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 no_miband5.setVisibility(View.VISIBLE);
                 yes_miband5.startAnimation(mFadeInAnim);
                 no_miband5.startAnimation(mFadeInAnim);
-
+                setRotation setRotation = new setRotation();
+                setRotation.execute();
                 yes_miband5.setClickable(true);
                 no_miband5.setClickable(true);
 
@@ -164,10 +205,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                 if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("YES")){
                     Intent intent = new Intent(this, BraceletReadSleep.class);
+                    //setRotation sr = new setRotation();
+                    //sr.execute();
                     startActivity(intent);
                 }
                 if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("NO")) {
                     Intent intent = new Intent(this, TodaySleepHours.class);
+                    //noBracelet noBracelet = new noBracelet();
+                    //noBracelet.execute();
                     startActivity(intent);
                 }
             }
@@ -175,14 +220,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if (v.getId() == R.id.yes_miband5){
             Intent intent = new Intent(this, TryingConnectionActivity.class);
-
+            yesBracelet yb = new yesBracelet();
+            yb.execute();
             startActivity(intent);
         }
         if (v.getId() == R.id.no_miband5){
             Intent intent2 = new Intent(this, SleepCountChanger.class);
-            SharedPreferences.Editor editor = myData.edit();
-            editor.putString(APP_PREFERENCES_HAS_BRACELET,"NO");
-            editor.apply();
+            noBracelet noBracelet = new noBracelet();
+            noBracelet.execute();
             startActivity(intent2);
         }
     }

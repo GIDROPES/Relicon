@@ -7,6 +7,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -41,13 +42,18 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
 
-        if (normalRotationMode == 0) {
+        SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+        //SharedPreferences.Editor editor = sp.edit();
+
+
+        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0")) {
             speedValue.setRotationY(-180f);
             kmh.setRotationY(-180f);
         }
-        else {
-            speedValue.setRotationY(0f);
-            kmh.setRotationY(0f);
+        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("1"))
+        {
+            speedValue.setRotationY(0);
+            kmh.setRotationY(0);
         }
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -102,7 +108,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
 
         String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны","Не спать"};
-        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound5};
+        Integer sounds[] = { R.raw.sound1, R.raw.sound2, R.raw.sound3, R.raw.sound4};
         int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
         int exit = 0;
         Random random = new Random();

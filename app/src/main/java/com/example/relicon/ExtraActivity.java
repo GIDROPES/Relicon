@@ -9,11 +9,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.VideoView;
 
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
-    VideoView back_video; Button clear; CheckBox toMirror;
+    VideoView back_video; Button clear, saveToMenu; CheckBox toMirror; Spinner soundsSpinner;
     public static int now = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +31,25 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         clear = (Button) findViewById(R.id.clear); clear.setBackgroundResource(R.drawable.inset_ripped);
         clear.setOnClickListener(this);
 
-        toMirror = (CheckBox) findViewById(R.id.toMirror); toMirror.setBackgroundResource(R.drawable.inset_ripped);
+        saveToMenu = (Button) findViewById(R.id.saveToMenu);
+        saveToMenu.setOnClickListener(this);
+
+        toMirror = (CheckBox) findViewById(R.id.toMirror); // toMirror.setBackgroundResource(R.drawable.inset_ripped);
+        SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+
+        if(sp.contains(MainActivity.APP_PREFERENCES_ROTATION_NORMAL)){
+            if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0"))
+                toMirror.setChecked(true);
+        }  //код для проверки чек бокса
+
+
         toMirror.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-                SharedPreferences.Editor editor = sp.edit();
 
-                if (toMirror.isEnabled()) {
+                if (toMirror.isChecked()) {
                     editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"0");
                     editor.apply();
                 }
@@ -46,6 +57,13 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
                     editor.apply(); }
             }
         });
+
+        
+        //блок кода для выпадающего списка
+        soundsSpinner = (Spinner) findViewById(R.id.soundsSpinner);
+            soundsSpinner.setBackgroundResource(R.drawable.inset_ripped);
+
+
     }
 
     @Override
@@ -58,6 +76,11 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
             //Toast toast = Toast.makeText(this,"Перезагрузите приложение", Toast.LENGTH_LONG);
             //toast.show();
             Intent intent = new Intent(ExtraActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
+        if (v.getId() == R.id.saveToMenu){
+            Intent intent = new Intent(ExtraActivity.this, MenuActivity.class);
+
             startActivity(intent);
         }
     }

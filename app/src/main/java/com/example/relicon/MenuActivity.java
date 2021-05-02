@@ -103,6 +103,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 }
             }
             if (sp.contains(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK)){
+
                 String infGoogleFitSleep = MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK;
                 Long GFSleepHours = Long.parseLong(infGoogleFitSleep);
 
@@ -113,12 +114,17 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                 if (GFSleepHours <= 5 ){
                     sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
                     sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
+                    proection_butt.setClickable(false);
+                    proection_butt.setAlpha(0.3f); proection_title.setAlpha(0.3f);
                 }
                 if (GFSleepHours >= 8 ){
                     sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
                     sleepInfo.setTextColor(getResources().getColor(R.color.white));
                 }
             }
+
+
+
 
             return null;
         }
