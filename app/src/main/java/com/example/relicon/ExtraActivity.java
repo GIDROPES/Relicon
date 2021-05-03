@@ -78,11 +78,17 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
                     editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(pos));
                     //SoundWritingTask soundWritingTask = new SoundWritingTask();
                     //soundWritingTask.doInBackground(position);
-                    Toast.makeText(ExtraActivity.this,"Вы выбрали "+ soundsSpinner.getSelectedItem() , Toast.LENGTH_SHORT).show();
 
             //Записываем позицию выбранного звука
             //для дальнейшего использования
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            Toast.makeText(ExtraActivity.this,"Вы выбрали "+ soundsSpinner.getSelectedItem() , Toast.LENGTH_SHORT).show();
+
+            super.onPostExecute(aVoid);
         }
     }
     class RotationModeWritingTask extends  AsyncTask<Integer, Void, Void>{
