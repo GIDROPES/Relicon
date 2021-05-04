@@ -37,20 +37,15 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         saveToMenu = (Button) findViewById(R.id.saveToMenu);
         saveToMenu.setOnClickListener(this);
 
-        toMirror = (CheckBox) findViewById(R.id.toMirror); // toMirror.setBackgroundResource(R.drawable.inset_ripped);
+        toMirror = (CheckBox) findViewById(R.id.toMirror);
 
-        ChekBoxChekingTask cht = new ChekBoxChekingTask();
-        cht.execute();
+        ChekBoxChekingTask cht = new ChekBoxChekingTask(); //делает чек бокс отмеченным или пустым в зависимости от прошлого выбора
+        cht.execute();                                      //результат выбора сохраняется по кнопке "Сохранить"
 
         toMirror.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RotationModeWritingTask rw = new RotationModeWritingTask();
 
-                if (toMirror.isChecked()) {
-                    rw.doInBackground(0);
-                }
-                else { rw.doInBackground(1); }
             }
         });
 
@@ -62,22 +57,36 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         SpinnerSetter spinnerSetter = new SpinnerSetter();
         spinnerSetter.execute();
 
+        ArrayAdapter<?> adapter =
+                ArrayAdapter.createFromResource(this, R.array.sounds, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        soundsSpinner.setAdapter(adapter);
+
+        soundsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                SoundWritingTask swt = new SoundWritingTask();
+                swt.doInBackground(soundsSpinner.getSelectedItemPosition());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
     }
     //Задачи для отдельных потоков
-    class SoundWritingTask extends AsyncTask<Void, Void, Void>{
+    class SoundWritingTask extends AsyncTask<Integer, Void, Void>{
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(Integer... pos) {
 
-                    Integer pos = soundsSpinner.getSelectedItemPosition();
                     SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
 
                     editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(pos));
-                    //SoundWritingTask soundWritingTask = new SoundWritingTask();
-                    //soundWritingTask.doInBackground(position);
 
             //Записываем позицию выбранного звука
             //для дальнейшего использования
@@ -86,27 +95,38 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(ExtraActivity.this,"Вы выбрали "+ soundsSpinner.getSelectedItem() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(ExtraActivity.this,"Вы выбрали звук "+ soundsSpinner.getSelectedItemPosition() , Toast.LENGTH_SHORT).show();
 
             super.onPostExecute(aVoid);
         }
     }
-    class RotationModeWritingTask extends  AsyncTask<Integer, Void, Void>{
+    class RotationModeWritingTask1 extends  AsyncTask<Void, Void, Void>{
 
         @Override
-        protected Void doInBackground(Integer... integers) {
+        protected Void doInBackground(Void... voids) {
 
             SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
 
-            if (integers.equals(0)){
-                editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"0");
+
+                editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"1"); //Кладем 1, чек бокс не отмечен, скорость в привычном виде
                 editor.apply();
-            }
-            if (integers.equals(1)){
-                editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"1");
+
+            return null;
+        }
+    }
+    class RotationModeWritingTask0 extends  AsyncTask<Void, Void, Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+
+
+                editor.putString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"0");  //Кладем значение 0, галочка отмечена, скорость отзеркалена
                 editor.apply();
-            }
+
             return null;
         }
     }
@@ -131,6 +151,9 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
             if(sp.contains(MainActivity.APP_PREFERENCES_ROTATION_NORMAL)){
                 if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0"))
                     toMirror.setChecked(true);
+                else if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("1")){
+                    toMirror.setChecked(false);
+                }
             }  //код для проверки чек бокса
 
             return null;
@@ -140,18 +163,29 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected Void doInBackground(Void... voids) {
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
             SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+
+            ArrayAdapter<?> adapter =
+                    ArrayAdapter.createFromResource(ExtraActivity.this, R.array.sounds, android.R.layout.simple_spinner_item);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+            soundsSpinner.setAdapter(adapter);
 
             if (sp.contains(MainActivity.APP_PREFERENCES_USABLE_SOUND)) {
 
-                switch (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"")) {
-                    case "sound1" : soundsSpinner.setSelection(1); break;
-                    case "sound2" : soundsSpinner.setSelection(2); break;
-                    case "sound3" : soundsSpinner.setSelection(3); break;
-                    case "sound4" : soundsSpinner.setSelection(4); break;
-                }
+                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("1")) soundsSpinner.setSelection(0);
+                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("2")) soundsSpinner.setSelection(1);
+                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("3")) soundsSpinner.setSelection(2);
+                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("4")) soundsSpinner.setSelection(3);
+
             }
-            return null;
         }
     }
     //-------------------------------------------------------
@@ -166,12 +200,22 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
             //toast.show();
             Intent intent = new Intent(ExtraActivity.this, MainActivity.class);
             startActivity(intent);
+            finish();
         }
         if (v.getId() == R.id.saveToMenu){
             Intent intent = new Intent(ExtraActivity.this, MenuActivity.class);
-            SoundWritingTask soundWritingTask = new SoundWritingTask();
-            soundWritingTask.execute();
+           // SoundWritingTask soundWritingTask = new SoundWritingTask();
+           // soundWritingTask.execute();
+            RotationModeWritingTask1 rw1 = new RotationModeWritingTask1();
+            RotationModeWritingTask0 rw0 = new RotationModeWritingTask0();
+
+            if (toMirror.isChecked()) {
+                rw0.execute();
+            }
+            else { rw1.execute(); }
+
             startActivity(intent);
+            finish();
         }
     }
 }

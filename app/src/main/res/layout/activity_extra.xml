@@ -77,11 +77,10 @@
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toMirror"
-        android:layout_marginStart="69dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="30dp"
-        android:layout_toEndOf="@+id/changeSound"
-        android:entries="@array/sounds"
-        />
+        android:layout_marginEnd="9dp"
+        android:entries="@array/sounds" />
 
     <Button
         android:id="@+id/saveToMenu"

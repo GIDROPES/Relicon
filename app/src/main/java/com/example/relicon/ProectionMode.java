@@ -15,6 +15,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -44,7 +45,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
         SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
         //SharedPreferences.Editor editor = sp.edit();
-
 
         if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0")) {
             speedValue.setRotationY(-180f);
@@ -84,6 +84,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             public void onClick(View v) {
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
     }
@@ -224,7 +225,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             //commented, this is from the old version
             
         }
-        Toast.makeText(this,"Подключение может занять несколько минут", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,"Подключение может занять некоторое время", Toast.LENGTH_LONG).show();
 
     }
 
