@@ -51,13 +51,13 @@ public class TryingConnectionActivity extends AppCompatActivity {
 
     private static final int GOOGLE_FIT_PERMISSIONS_REQUEST_CODE = 1;
     private GoogleSignInOptionsExtension fitnessOptions;
-    private TextView textView;
-    private GoogleSignInAccount account;
+    public static GoogleSignInAccount account;
     private float sleepHours = 0;
     public static String SLEEP_GOOGLE_FIT_HOURS;
 
 
     VideoView back_video;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,7 +146,7 @@ public class TryingConnectionActivity extends AppCompatActivity {
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.DAY_OF_WEEK, -1);
+        //cal.add(Calendar.DAY_OF_WEEK, -1); //Изменено на 0. В случае неудачи вернуть на -1
         long startTime = cal.getTimeInMillis();
 
         // создаем подключение в виде сессии (не знаю чем отличается от простого запроса данных)

@@ -19,6 +19,9 @@ import android.widget.VideoView;
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
     VideoView back_video; Button clear, saveToMenu; CheckBox toMirror; Spinner soundsSpinner;
 
+    static Integer position;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,20 +57,21 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         soundsSpinner = (Spinner) findViewById(R.id.soundsSpinner);
         soundsSpinner.setBackgroundResource(R.drawable.inset_ripped);
 
-        SpinnerSetter spinnerSetter = new SpinnerSetter();
-        spinnerSetter.execute();
-
-        ArrayAdapter<?> adapter =
-                ArrayAdapter.createFromResource(this, R.array.sounds, android.R.layout.simple_spinner_item);
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.sounds, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         soundsSpinner.setAdapter(adapter);
+
+        SpinnerSetter spinnerSetter = new SpinnerSetter();
+        spinnerSetter.execute();
+
+        position = soundsSpinner.getSelectedItemPosition();
 
         soundsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 SoundWritingTask swt = new SoundWritingTask();
-                swt.doInBackground(soundsSpinner.getSelectedItemPosition());
+                swt.execute();
             }
 
             @Override
@@ -78,15 +82,15 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
     }
     //Задачи для отдельных потоков
-    class SoundWritingTask extends AsyncTask<Integer, Void, Void>{
+    class SoundWritingTask extends AsyncTask<Void, Void, Void>{
 
         @Override
-        protected Void doInBackground(Integer... pos) {
+        protected Void doInBackground(Void... voids) {
 
                     SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
 
-                    editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(pos));
+                    editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(position));
 
             //Записываем позицию выбранного звука
             //для дальнейшего использования

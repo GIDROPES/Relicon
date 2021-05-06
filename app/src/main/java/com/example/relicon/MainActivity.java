@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String APP_PREFERENCES_BRACELET_SLEEP_CHECK = "BraceleteSleepTimeToday";     //сон в конкретно сегодняшний день по браслету
     public static final String APP_PREFERENCES_ROTATION_NORMAL = "RotationSpeedCounter";     //сон в конкретно сегодняшний день по браслету
     public static final String APP_PREFERENCES_USABLE_SOUND = "Sound";     //хранит выбранный звук для режима сна и смешанного режима
+    public static final String APP_PREFERENCES_COLOR_PREFERED = "ColorSpeed";     //цвет проекции
 
 
     SharedPreferences myData;
