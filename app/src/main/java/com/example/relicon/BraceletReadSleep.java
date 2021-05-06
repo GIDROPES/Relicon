@@ -39,7 +39,7 @@ public class BraceletReadSleep extends AppCompatActivity {
         back_video.setVideoURI(uri);
         back_video.start();                                                               //видео на фоне
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
-        accessGoogleFit();
+        //accessGoogleFit();
         SleepTextAnim sleepTextAnim = new SleepTextAnim(); //Анимацией показывает кол-во часов сна
         sleepTextAnim.execute();
     }
@@ -48,7 +48,8 @@ public class BraceletReadSleep extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
+            SharedPreferences data = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            todaySleep = data.getString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK," ");
             Animation mFadeInAnim, mFadeOutAnim;
             mFadeInAnim = AnimationUtils.loadAnimation(BraceletReadSleep.this,R.anim.fadein);
             mFadeOutAnim = AnimationUtils.loadAnimation(BraceletReadSleep.this,R.anim.fadeout);
@@ -57,11 +58,7 @@ public class BraceletReadSleep extends AppCompatActivity {
             sleepCount.setText("Вы спали " + todaySleep + " часов");      //Вытащил из другой активности информацию о часах сна
             Intent intent = new Intent(BraceletReadSleep.this, MenuActivity.class);
 
-            SharedPreferences data = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-            SharedPreferences.Editor editor = data.edit();
 
-            editor.putString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK, TryingConnectionActivity.SLEEP_GOOGLE_FIT_HOURS); //Сделали запись с информацией по сегодняшнему сну из гугл фита
-            editor.apply();
 
             for(int i =0; i < 2; i++){
                 sleepCount.startAnimation(mFadeInAnim);
@@ -145,7 +142,7 @@ public class BraceletReadSleep extends AppCompatActivity {
                 //textView.setText(hours);
                 todaySleep = hours;
             }
-        }).addOnFailureListener(e -> Log.i("TAG", e.getMessage()));
+        }).addOnFailureListener(e -> Log.i("FAILURE2", e.getMessage()));
     }
 
 }

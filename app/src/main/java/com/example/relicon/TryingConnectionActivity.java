@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import static java.text.DateFormat.getTimeInstance;
 import android.annotation.SuppressLint;
+
+import com.google.android.gms.fitness.FitnessActivities;
 import com.google.android.gms.fitness.data.Session;
 import com.google.android.gms.fitness.request.SessionReadRequest;
 import java.text.DateFormat;
@@ -15,10 +17,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.util.TimeUtils;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -38,6 +44,7 @@ import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.request.DataReadRequest;
 import com.google.android.gms.fitness.result.DataReadResponse;
 import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 
@@ -55,8 +62,9 @@ public class TryingConnectionActivity extends AppCompatActivity {
     private float sleepHours = 0;
     public static String SLEEP_GOOGLE_FIT_HOURS;
 
+    static String hours;
 
-    VideoView back_video;
+    VideoView back_video; Button toBracelet; TextView tw;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +80,17 @@ public class TryingConnectionActivity extends AppCompatActivity {
 
         ////////////////////////////////////////////////////////////////////////////
 
+        toBracelet = findViewById(R.id.toBracelet); toBracelet.setBackgroundResource(R.drawable.inset_ripped);
+        toBracelet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TryingConnectionActivity.this,BraceletReadSleep.class);
+                startActivity(intent);
+            }
+        });
+
+        tw = findViewById(R.id.tw);
+
         fitnessOptions = FitnessOptions.builder()
                 .addDataType(DataType.AGGREGATE_ACTIVITY_SUMMARY, FitnessOptions.ACCESS_READ)
                 .addDataType(DataType.TYPE_SLEEP_SEGMENT, FitnessOptions.ACCESS_READ)
@@ -86,11 +105,14 @@ public class TryingConnectionActivity extends AppCompatActivity {
                     GOOGLE_FIT_PERMISSIONS_REQUEST_CODE, // e.g. 1
                     account,
                     fitnessOptions);
+
         } else {
             accessGoogleFit();
         }
 
-       // if (Google)
+       // TakeDataSleep takeDataSleep = new TakeDataSleep(); takeDataSleep.execute();
+
+
     }
 
     @Override
@@ -106,7 +128,7 @@ public class TryingConnectionActivity extends AppCompatActivity {
             editor.putString(MainActivity.APP_PREFERENCES_HAS_BRACELET,"YES");
             editor.apply();
 
-                Intent intent = new Intent(TryingConnectionActivity.this, MenuActivity.class);
+                Intent intent = new Intent(TryingConnectionActivity.this, BraceletReadSleep.class);
                 startActivity(intent);
             
         } else {
@@ -146,8 +168,9 @@ public class TryingConnectionActivity extends AppCompatActivity {
         Date now = new Date();
         cal.setTime(now);
         long endTime = cal.getTimeInMillis();
-        //cal.add(Calendar.DAY_OF_WEEK, -1); //Изменено на 0. В случае неудачи вернуть на -1
+        cal.add(Calendar.DAY_OF_WEEK, -1); //Изменено на 0. В случае неудачи вернуть на -1
         long startTime = cal.getTimeInMillis();
+
 
         // создаем подключение в виде сессии (не знаю чем отличается от простого запроса данных)
         SessionReadRequest request = new SessionReadRequest.Builder()
@@ -169,7 +192,9 @@ public class TryingConnectionActivity extends AppCompatActivity {
                 .build();
 
         // стартуем сессию
-        Fitness.getSessionsClient(this, account).startSession(session).addOnFailureListener(e -> Log.i("TAG", "Session" + e.getMessage()));
+        Fitness.getSessionsClient(this, account)
+                .startSession(session)
+                .addOnFailureListener(e -> Log.i("TAG", "Session" + e.getMessage()));
 
         // Запрашиваем данные
         Fitness.getSessionsClient(this, account).readSession(request).addOnSuccessListener(sessionReadResponse -> {
@@ -179,11 +204,74 @@ public class TryingConnectionActivity extends AppCompatActivity {
                 long sessionSleepTime = sessionEnd - sessionStart;
                 // переводим миллисекунды в часы
                 // https://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
-                String hours = String.format("%d hour", TimeUnit.MILLISECONDS.toHours(sessionSleepTime));
+                String hours = String.format("%d", TimeUnit.MILLISECONDS.toHours(sessionSleepTime));
                 Log.i("TAG", hours);
-                //textView.setText(hours);
-                SLEEP_GOOGLE_FIT_HOURS = hours;
+                tw.setText(hours);
+                SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK,hours);
+                editor.apply();
             }
-        }).addOnFailureListener(e -> Log.i("TAG", e.getMessage()));
+        }).addOnFailureListener(e -> Log.i("FAILURE1", e.getMessage()));
+
+
+
+    }
+  /*  class TakeDataSleep extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+
+            Calendar cal = Calendar.getInstance();
+            Date now = new Date();
+            cal.setTime(now);
+            long endTime = cal.getTimeInMillis();
+            cal.add(Calendar.DAY_OF_WEEK, -1); //Изменено на 0. В случае неудачи вернуть на -1
+            long startTime = cal.getTimeInMillis();
+
+            // Begin by creating the query.
+            DataReadRequest readRequest1 = new DataReadRequest.Builder()
+                    .aggregate(DataType.TYPE_SLEEP_SEGMENT)
+                    .bucketByTime(1, TimeUnit.DAYS)
+                    .setTimeRange(startTime,endTime,TimeUnit.MILLISECONDS)
+                    .build();
+
+            Fitness.getHistoryClient(TryingConnectionActivity.this,GoogleSignIn.getLastSignedInAccount(TryingConnectionActivity.this))
+                    .readData(readRequest1)
+                    .addOnSuccessListener(new OnSuccessListener<DataReadResponse>() {
+                        @Override
+                        public void onSuccess(DataReadResponse dataReadResponse) {
+                            List<DataSet> dataSets = dataReadResponse.getDataSets();
+                            for(DataSet dataSet: dataSets){
+                                for(Field field: dataSet.getDataType().getFields()){
+                                    if(field.getName().equalsIgnoreCase(FitnessActivities.SLEEP)){
+                                        SLEEP_GOOGLE_FIT_HOURS = field.getName();
+                                        Toast.makeText(TryingConnectionActivity.this, "ENCONTRADO", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+
+            return null;
+        }
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+
+   */
+
+    public static void setSleepGoogleFitHours(String hours){
+        SLEEP_GOOGLE_FIT_HOURS = hours;
     }
 }

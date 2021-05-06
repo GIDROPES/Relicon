@@ -206,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             else {
                 if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("YES")){
-                    Intent intent = new Intent(this, BraceletReadSleep.class);
+                    Intent intent = new Intent(this, TryingConnectionActivity.class);
                     //setRotation sr = new setRotation();
                     //sr.execute();
                     startActivity(intent);
