@@ -16,7 +16,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="Пытаемся связать Google Fit..."
+        android:text="Пытаемся связаться Google Fit..."
         android:layout_alignParentTop="true"
         android:layout_marginTop="120dp"
         android:textColor="@color/white"
@@ -38,8 +38,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:textSize="12sp"
+        android:textSize="23sp"
         android:textColor="@color/white"
-        android:text="a"
+        android:text="Wait..."
+        android:textStyle="bold"
         />
 </RelativeLayout>

@@ -19,7 +19,7 @@ import android.widget.VideoView;
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
     VideoView back_video; Button clear, saveToMenu; CheckBox toMirror; Spinner soundsSpinner;
 
-    static Integer position;
+    static String myPosition;
 
 
     @Override
@@ -64,14 +64,13 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         SpinnerSetter spinnerSetter = new SpinnerSetter();
         spinnerSetter.execute();
+        //soundsSpinner.setSelection(Integer.parseInt(myPosition)); //ВЫЗЫВАЕТ ОШИБКУ, ИСПРАВИТЬ
 
-        position = soundsSpinner.getSelectedItemPosition();
 
-        soundsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+     /*   soundsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                SoundWritingTask swt = new SoundWritingTask();
-                swt.execute();
+
             }
 
             @Override
@@ -80,6 +79,7 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
             }
         });
 
+      */
     }
     //Задачи для отдельных потоков
     class SoundWritingTask extends AsyncTask<Void, Void, Void>{
@@ -90,8 +90,8 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
                     SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
 
-                    editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(position));
-
+                    editor.putString(MainActivity.APP_PREFERENCES_USABLE_SOUND, String.valueOf(soundsSpinner.getSelectedItemPosition()));
+                    editor.apply();
             //Записываем позицию выбранного звука
             //для дальнейшего использования
             return null;
@@ -163,7 +163,7 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
             return null;
         }
     }
-    class SpinnerSetter extends AsyncTask<Void,Void,Void>{
+    class SpinnerSetter extends AsyncTask<Void,Void,Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -174,22 +174,13 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            String pos = "";
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            if(sp.contains(MainActivity.APP_PREFERENCES_USABLE_SOUND))
+            pos = sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "");
 
-            ArrayAdapter<?> adapter =
-                    ArrayAdapter.createFromResource(ExtraActivity.this, R.array.sounds, android.R.layout.simple_spinner_item);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-            soundsSpinner.setAdapter(adapter);
-
-            if (sp.contains(MainActivity.APP_PREFERENCES_USABLE_SOUND)) {
-
-                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("1")) soundsSpinner.setSelection(0);
-                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("2")) soundsSpinner.setSelection(1);
-                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("3")) soundsSpinner.setSelection(2);
-                if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND,"").equals("4")) soundsSpinner.setSelection(3);
-
-            }
+            myPosition = pos;
+            soundsSpinner.setSelection(Integer.parseInt(pos));
         }
     }
     //-------------------------------------------------------
@@ -208,8 +199,8 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         }
         if (v.getId() == R.id.saveToMenu){
             Intent intent = new Intent(ExtraActivity.this, MenuActivity.class);
-           // SoundWritingTask soundWritingTask = new SoundWritingTask();
-           // soundWritingTask.execute();
+            SoundWritingTask soundWritingTask = new SoundWritingTask();
+            soundWritingTask.execute();
             RotationModeWritingTask1 rw1 = new RotationModeWritingTask1();
             RotationModeWritingTask0 rw0 = new RotationModeWritingTask0();
 

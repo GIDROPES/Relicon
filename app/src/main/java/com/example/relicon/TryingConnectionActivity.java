@@ -206,7 +206,7 @@ public class TryingConnectionActivity extends AppCompatActivity {
                 // https://stackoverflow.com/questions/625433/how-to-convert-milliseconds-to-x-mins-x-seconds-in-java
                 String hours = String.format("%d", TimeUnit.MILLISECONDS.toHours(sessionSleepTime));
                 Log.i("TAG", hours);
-                tw.setText(hours);
+                tw.setText("Done!");
                 SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK,hours);

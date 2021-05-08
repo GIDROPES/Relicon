@@ -102,9 +102,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
                     sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
                 }
             }
+
             if (sp.contains(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK)){
 
-                String infGoogleFitSleep = MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK;
+                String infGoogleFitSleep = sp.getString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK,"");
                 Long GFSleepHours = Long.parseLong(infGoogleFitSleep);
 
                 if (GFSleepHours < 8 && GFSleepHours > 5){

@@ -178,6 +178,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    class SoundWritingFirst extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(APP_PREFERENCES_USABLE_SOUND,"0");
+            editor.apply();
+            return null;
+        }
+    }
+
     @Override
     public void onClick(View v) {
         myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
@@ -224,12 +236,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Intent intent = new Intent(this, TryingConnectionActivity.class);
             yesBracelet yb = new yesBracelet();
             yb.execute();
+            SoundWritingFirst soundWritingFirst = new SoundWritingFirst();
+            soundWritingFirst.execute();
             startActivity(intent);
         }
         if (v.getId() == R.id.no_miband5){
             Intent intent2 = new Intent(this, SleepCountChanger.class);
             noBracelet noBracelet = new noBracelet();
             noBracelet.execute();
+            SoundWritingFirst soundWritingFirst = new SoundWritingFirst();
+            soundWritingFirst.execute();
             startActivity(intent2);
         }
     }
