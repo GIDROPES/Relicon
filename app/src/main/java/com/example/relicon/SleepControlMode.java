@@ -2,14 +2,17 @@ package com.example.relicon;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -21,19 +24,32 @@ import java.util.concurrent.TimeUnit;
 public class SleepControlMode extends AppCompatActivity {
     Animation mFadeInAnim, mFadeOutAnim;
     public static MediaPlayer mediaPlayer;
-    VideoView back_video; TextView wakeup;
+    VideoView back_video; TextView wakeup;  Button backToMenuSleep;
     public static int exit = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep_control_mode);
-
+        exit = 0;
         back_video = (VideoView) findViewById(R.id.back_video);
         String path = "android.resource://";
         Uri uri = Uri.parse(path + getPackageName() + "/" + R.raw.background2);
         back_video.setVideoURI(uri);
         back_video.start();
         back_video.setOnPreparedListener(mp -> mp.setLooping(true));
+
+        backToMenuSleep = findViewById(R.id.backToMenuSleep);
+
+        backToMenuSleep.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SleepControlMode.this, MenuActivity.class);
+                exit = 1;
+                startActivity(intent);
+                finish();
+            }
+        });
+
         SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
         soundPlayingTask.execute();
 

@@ -17,7 +17,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 public class ExtraActivity extends AppCompatActivity implements View.OnClickListener {
-    VideoView back_video; Button clear, saveToMenu; CheckBox toMirror; Spinner soundsSpinner;
+    VideoView back_video; Button clear, saveToMenu,toCustomProection; CheckBox toMirror; Spinner soundsSpinner;
 
     static String myPosition;
 
@@ -41,6 +41,16 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         saveToMenu.setOnClickListener(this);
 
         toMirror = (CheckBox) findViewById(R.id.toMirror);
+
+        toCustomProection = findViewById(R.id.toCustomization);
+        toCustomProection.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExtraActivity.this,CustomizationProection.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         ChekBoxChekingTask cht = new ChekBoxChekingTask(); //делает чек бокс отмеченным или пустым в зависимости от прошлого выбора
         cht.execute();                                      //результат выбора сохраняется по кнопке "Сохранить"
@@ -184,6 +194,24 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         }
     }
     //-------------------------------------------------------
+
+    @Override
+    protected void onResume() {
+        back_video.resume();
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        back_video.suspend();
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        back_video.stopPlayback();
+        super.onDestroy();
+    }
 
     @Override
     public void onClick(View v) {

@@ -151,11 +151,13 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     }
 
     class SoundNotif extends AsyncTask<Void,Void,Void>{
-
+        SharedPreferences sp;
         @Override
         protected Void doInBackground(Void... voids) {
             MediaPlayer mp;
             //int exit = 0;
+            sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            if(sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"").equals("true")) {
                 if (roundedCurrentSpeed <= 39) {
                     countSound40 = 0;
                     countSound60 = 0;
@@ -181,26 +183,33 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
                 ////////блок обновлений////////
 
-                if (roundedCurrentSpeed < 58 && roundedCurrentSpeed > 54){ countSound60 = 0; }
-                if (roundedCurrentSpeed < 88 && roundedCurrentSpeed > 84){ countSound90 = 0; }
-                if (roundedCurrentSpeed < 38 && roundedCurrentSpeed > 34){ countSound40 = 0; }
-                if (roundedCurrentSpeed < 108 && roundedCurrentSpeed >104){ countSount110 = 0; }
+                if (roundedCurrentSpeed < 58 && roundedCurrentSpeed > 54) {
+                    countSound60 = 0;
+                }
+                if (roundedCurrentSpeed < 88 && roundedCurrentSpeed > 84) {
+                    countSound90 = 0;
+                }
+                if (roundedCurrentSpeed < 38 && roundedCurrentSpeed > 34) {
+                    countSound40 = 0;
+                }
+                if (roundedCurrentSpeed < 108 && roundedCurrentSpeed > 104) {
+                    countSount110 = 0;
+                }
 
                 //////////////////////////////
 
-                if (roundedCurrentSpeed >= 90 && roundedCurrentSpeed <= 109 && countSound90 == 0)
-                {
+                if (roundedCurrentSpeed >= 90 && roundedCurrentSpeed <= 109 && countSound90 == 0) {
                     mp = MediaPlayer.create(ProectionMode.this, R.raw.speed90);
                     mp.start();
                     countSound90 = 1;
                     countSount110 = 0;
                 }
-                if (roundedCurrentSpeed >= 110 && countSount110 == 0)
-                {
+                if (roundedCurrentSpeed >= 110 && countSount110 == 0) {
                     mp = MediaPlayer.create(ProectionMode.this, R.raw.speed110);
                     mp.start();
                     countSount110 = 1;
                 }
+            }
             return null;
         }
     }

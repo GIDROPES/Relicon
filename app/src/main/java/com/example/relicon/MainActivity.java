@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String APP_PREFERENCES_ROTATION_NORMAL = "RotationSpeedCounter";     //сон в конкретно сегодняшний день по браслету
     public static final String APP_PREFERENCES_USABLE_SOUND = "Sound";     //хранит выбранный звук для режима сна и смешанного режима
     public static final String APP_PREFERENCES_COLOR_PREFERED = "ColorSpeed";     //цвет проекции
+    public static final String APP_PREFERENCES_SPEED_NOTIFICATION = "ProectionSounds";     //Содержит информацию о наличии оповещений об ограничениях скорости
 
 
     SharedPreferences myData;
@@ -185,6 +186,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             myData = getSharedPreferences(APP_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = myData.edit();
             editor.putString(APP_PREFERENCES_USABLE_SOUND,"0");
+            editor.apply();
+            editor.putString(APP_PREFERENCES_SPEED_NOTIFICATION,"true");
             editor.apply();
             return null;
         }

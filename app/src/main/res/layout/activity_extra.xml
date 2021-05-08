@@ -91,4 +91,15 @@
         android:layout_marginStart="27dp"
         android:layout_marginBottom="30dp"
         android:text="СОХРАНИТЬ И В МЕНЮ"/>
+
+    <Button
+        android:id="@+id/toCustomization"
+        android:layout_width="140dp"
+        android:layout_height="80dp"
+        android:layout_above="@+id/saveToMenu"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="92dp"
+        android:background="@color/my_orange"
+        android:text="НАСТРОИТЬ ПРОЕКЦИЮ"
+        android:textSize="16sp" />
 </RelativeLayout>
