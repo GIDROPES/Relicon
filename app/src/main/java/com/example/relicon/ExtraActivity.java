@@ -42,7 +42,7 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         toMirror = (CheckBox) findViewById(R.id.toMirror);
 
-        toCustomProection = findViewById(R.id.toCustomization);
+        toCustomProection = findViewById(R.id.toCustomization); toCustomProection.setBackgroundResource(R.drawable.inset_ripped);
         toCustomProection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,20 +76,6 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
         spinnerSetter.execute();
         //soundsSpinner.setSelection(Integer.parseInt(myPosition)); //ВЫЗЫВАЕТ ОШИБКУ, ИСПРАВИТЬ
 
-
-     /*   soundsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-
-      */
     }
     //Задачи для отдельных потоков
     class SoundWritingTask extends AsyncTask<Void, Void, Void>{
@@ -109,7 +95,7 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(ExtraActivity.this,"Вы выбрали звук "+ soundsSpinner.getSelectedItemPosition() , Toast.LENGTH_SHORT).show();
+            Toast.makeText(ExtraActivity.this,"Вы выбрали звук "+ soundsSpinner.getSelectedItemPosition()+1 , Toast.LENGTH_SHORT).show();
 
             super.onPostExecute(aVoid);
         }

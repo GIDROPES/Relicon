@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String APP_PREFERENCES_USABLE_SOUND = "Sound";     //хранит выбранный звук для режима сна и смешанного режима
     public static final String APP_PREFERENCES_COLOR_PREFERED = "ColorSpeed";     //цвет проекции
     public static final String APP_PREFERENCES_SPEED_NOTIFICATION = "ProectionSounds";     //Содержит информацию о наличии оповещений об ограничениях скорости
-
+    public static final String APP_PREFERENCES_MULTI_MODE = "MultiModeInfo";     //Содержит информацию о режиме работы
 
     SharedPreferences myData;
 
@@ -188,6 +188,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.putString(APP_PREFERENCES_USABLE_SOUND,"0");
             editor.apply();
             editor.putString(APP_PREFERENCES_SPEED_NOTIFICATION,"true");
+            editor.apply();
+            editor.putString(APP_PREFERENCES_MULTI_MODE,"true");
             editor.apply();
             return null;
         }

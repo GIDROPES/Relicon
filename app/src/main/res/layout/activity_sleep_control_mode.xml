@@ -33,16 +33,15 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="31dp"
         android:layout_marginBottom="28dp" />
+
     <TextView
         android:id="@+id/littleInf"
         android:layout_width="215dp"
         android:layout_height="46dp"
-        android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="57dp"
+        android:layout_marginStart="31dp"
         android:layout_marginBottom="28dp"
-        android:layout_toEndOf="@+id/backToMenu"
+        android:layout_toEndOf="@+id/backToMenuSleep"
         android:text="Вы можете изменить звук в блоке 'Дополнительное' в Главном Меню"
         android:textColor="@color/white"
         android:textSize="11sp" />

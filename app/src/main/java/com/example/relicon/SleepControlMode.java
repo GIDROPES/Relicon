@@ -61,7 +61,7 @@ public class SleepControlMode extends AppCompatActivity {
         String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
                 ,"Не спать","Сосредоточьтесь на дороге","Осторожнее на дорогах"};
         Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
-        Integer results[] = {2,1,78,14};
+        Integer results[] = {2,1,78,14,6,7};
         //int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
 
         Random random = new Random();

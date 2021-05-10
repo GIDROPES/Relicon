@@ -27,14 +27,19 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class ProectionMode extends AppCompatActivity implements LocationListener {
-
-    private LocationManager locationManager;
-    private TextView speedValue, kmh, wakeup;
+    public static int exit = 0;
+    Animation mFadeInAnim, mFadeOutAnim;
+    private LocationManager locationManager; public static MediaPlayer mediaPlayer;
+    TextView speedValue, kmh, wakeup;
     int roundedCurrentSpeed;
     public static int normalRotationMode = 0;
     private Button backToMenu;
-    public static int MULTI_MODE;
+    String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
+            ,"Не спать","Сосредоточьтесь на дороге","Осторожнее на дорогах"};
+   // public static int MULTI_MODE;
     int countSound40 = 0; int countSound60 = 0; int countSound90 = 0; int countSount110 = 0;
+    String checker;
+    SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +48,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
 
-        SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+
         //SharedPreferences.Editor editor = sp.edit();
 
         if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0")) {
@@ -66,7 +71,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
             //start the program if permission is granted
             doStuff();
-            if (MULTI_MODE == 1){ SoundPlayingTask soundPlayingTask = new SoundPlayingTask(); soundPlayingTask.execute(); }
 
         }
 
@@ -83,15 +87,30 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
+                //exit = 1;
+                WriteMultiModeFalse wtf = new WriteMultiModeFalse();
+                wtf.execute();
                 startActivity(intent);
                 finish();
             }
         });
+
+        Random random = new Random();
+        int index = random.nextInt(wakeupPhrases.length);
+        wakeup = (TextView) findViewById(R.id.wakeup2);
+        wakeup.setText( wakeupPhrases[ index ] );
+
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
         SoundNotif soundNot = new SoundNotif();
+
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
+            wakeup = findViewById(R.id.wakeup2);
+            SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
+            soundPlayingTask.execute();
+        }
 
         speedValue = (TextView) findViewById(R.id.speedValue);
 
@@ -102,54 +121,91 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             roundedCurrentSpeed = (int) currentSpeed;
             if (roundedCurrentSpeed < 9 ) {speedValue.setText(String.valueOf(0));}
                 //speedValue.setText(String.format("%.2f", currentSpeed));
-            else {speedValue.setText(String.valueOf(roundedCurrentSpeed)); soundNot.execute();}
+            else {
+                CheckSoundNotif chsk = new CheckSoundNotif();
+                chsk.execute();
+                speedValue.setText(String.valueOf(roundedCurrentSpeed));
+            if(checker.equals("true")) {
+                soundNot.execute();
+                }
+            }
         }
     }
 
     class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
 
-        String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны","Не спать"};
-        Integer sounds[] = { R.raw.sound1, R.raw.sound2, R.raw.sound3, R.raw.sound4};
-        int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
-        int exit = 0;
-        Random random = new Random();
-        int index = random.nextInt(wakeupPhrases.length);
+
+        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
+        Integer results[] = {2,1,78,14,6,7};
+        //int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
+
+
+
+
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            MediaPlayer mediaPlayer;
-            Animation mFadeInAnim, mFadeOutAnim;
-            wakeup = (TextView) findViewById(R.id.wakeup2);
-            int exit = 0;
-            mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
-            mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
 
-            wakeup.setText( wakeupPhrases[ index ] );
+                mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
+                mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
 
-            while (true) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 wakeup.startAnimation(mFadeInAnim);
-                wakeup.startAnimation(mFadeOutAnim);
-                try {
-                    TimeUnit.MILLISECONDS.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Random randomS = new Random();
+
+
                 Random randomT = new Random();
-                mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[randomS.nextInt(sounds.length)]);
-                mediaPlayer.start();
+                int result = results[randomT.nextInt(results.length)];
+
+                if(result == 1) {
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("0")) {
+                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[0]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("1")) {
+                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[1]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("2")) {
+                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[2]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("3")) {
+                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[3]);
+                        mediaPlayer.start();
+                    }
+                }
+
                 try {
-                    TimeUnit.MILLISECONDS.sleep((times[randomT.nextInt(times.length)]));
+                    TimeUnit.MILLISECONDS.sleep(1300);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if (exit == 1) break;
-            }
+                wakeup.startAnimation(mFadeOutAnim);
+
+
             return null;
         }
     }
+    class CheckSoundNotif extends AsyncTask<Void,Void,Void>{
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            checker = sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"");
+            return null;
+        }
+    }
     class SoundNotif extends AsyncTask<Void,Void,Void>{
         SharedPreferences sp;
         @Override
@@ -213,7 +269,19 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             return null;
         }
     }
+    class WriteMultiModeFalse extends AsyncTask<Void,Void,Void>{
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.remove(MainActivity.APP_PREFERENCES_MULTI_MODE);
+            editor.apply();
+            editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE,"false");
+            editor.apply();
+            return null;
+        }
+    }
     
     private void doStuff() {
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);

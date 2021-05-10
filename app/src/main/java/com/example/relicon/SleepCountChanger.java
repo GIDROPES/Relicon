@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,7 +18,7 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
     VideoView back_video;
     Button toMenu; TextView tw;
     SeekBar seekBar;
-
+    static String myProgress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +39,7 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
         seekBar.setBackgroundResource(R.drawable.inset_ripped);
         seekBar.setOnSeekBarChangeListener(this);
         tw = (TextView) findViewById(R.id.defaultSleep);
+        myProgress = String.valueOf(seekBar.getProgress());
         tw.setText(String.valueOf(seekBar.getProgress()));
     }
 
@@ -69,14 +71,16 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
     public void onClick(View v) {
         if (v.getId() == R.id.toMenu){
             Intent intent = new Intent(this, MenuActivity.class);
-
+            WriteSleepDef wsf = new WriteSleepDef();
+            wsf.execute();
             startActivity(intent);
         }
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        tw.setText(String.valueOf(seekBar.getProgress()));
+        myProgress = String.valueOf(seekBar.getProgress());
     }
 
     @Override
@@ -84,14 +88,25 @@ public class SleepCountChanger extends AppCompatActivity implements View.OnClick
 
     }
 
+    class WriteSleepDef extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,myProgress);
+            editor.apply();
+            editor.putString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"Default");
+            editor.apply();
+
+
+            return null;
+        }
+    }
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        tw.setText(String.valueOf(seekBar.getProgress()));
-        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,String.valueOf(seekBar.getProgress()));
-        editor.apply();
-        editor.putString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"Default");
-        editor.apply();
+        //tw.setText(String.valueOf(seekBar.getProgress()));
+        myProgress = String.valueOf(seekBar.getProgress());
     }
 }

@@ -50,8 +50,9 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, ProectionMode.class);
-                ProectionMode.MULTI_MODE = 1;
+                WriteMultiModeTrue wrtr = new WriteMultiModeTrue(); wrtr.execute();
                 MenuActivity.this.startActivity(intent);
+                finish();
             }
         });
 
@@ -61,6 +62,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, ProectionMode.class);
                 MenuActivity.this.startActivity(intent);
+                finish();
             }
         });
 
@@ -70,6 +72,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, SleepControlMode.class);
                 startActivity(intent);
+                finish();
             }
         });
 
@@ -78,7 +81,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    class StrangeTask extends AsyncTask<Void,Integer,Void>{
+    class StrangeTask extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -130,7 +133,17 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             return null;
         }
     }
+    class WriteMultiModeTrue extends AsyncTask<Void,Void,Void>{
 
+        @Override
+        protected Void doInBackground(Void... voids) {
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE,"true");
+            editor.apply();
+            return null;
+        }
+    }
     @Override
     protected void onStart() {
         super.onStart();
