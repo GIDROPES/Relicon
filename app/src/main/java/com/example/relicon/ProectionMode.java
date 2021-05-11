@@ -39,12 +39,12 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
    // public static int MULTI_MODE;
     int countSound40 = 0; int countSound60 = 0; int countSound90 = 0; int countSount110 = 0;
     String checker;
-    SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+    SharedPreferences sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proection_mode);
-
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
 
@@ -60,6 +60,8 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             speedValue.setRotationY(0);
             kmh.setRotationY(0);
         }
+        CheckCurrentColor checkCurrentColor = new CheckCurrentColor();
+        checkCurrentColor.execute();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
@@ -88,8 +90,8 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             public void onClick(View v) {
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 //exit = 1;
-                WriteMultiModeFalse wtf = new WriteMultiModeFalse();
-                wtf.execute();
+                WriteMultiModeFalse wt = new WriteMultiModeFalse();
+                wt.execute();
                 startActivity(intent);
                 finish();
             }
@@ -97,8 +99,12 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
         Random random = new Random();
         int index = random.nextInt(wakeupPhrases.length);
-        wakeup = (TextView) findViewById(R.id.wakeup2);
-        wakeup.setText( wakeupPhrases[ index ] );
+
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
+            wakeup = (TextView) findViewById(R.id.wakeup2);
+            wakeup.setText( wakeupPhrases[ index ] );
+        }
+        
 
     }
 
@@ -282,7 +288,31 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             return null;
         }
     }
-    
+    class CheckCurrentColor extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            String check = sp.getString(MainActivity.APP_PREFERENCES_COLOR_PREFERED,"");
+
+            if (check.equals("Белый")){speedValue.setTextColor(getResources().getColor(R.color.white));
+                kmh.setTextColor(getResources().getColor(R.color.white));}
+            if (check.equals("Оранжевый")){speedValue.setTextColor(getResources().getColor(R.color.light_orange));
+                kmh.setTextColor(getResources().getColor(R.color.light_orange));}
+            if (check.equals("Голубой")){speedValue.setTextColor(getResources().getColor(R.color.proection_blue));
+                kmh.setTextColor(getResources().getColor(R.color.proection_blue));}
+            if (check.equals("Красный")){speedValue.setTextColor(getResources().getColor(R.color.proection_red));
+                kmh.setTextColor(getResources().getColor(R.color.proection_red));}
+            if (check.equals("Зеленый")){speedValue.setTextColor(getResources().getColor(R.color.proection_green));
+                kmh.setTextColor(getResources().getColor(R.color.proection_green));}
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
     private void doStuff() {
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 

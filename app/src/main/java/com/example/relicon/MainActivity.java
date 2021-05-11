@@ -32,9 +32,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static final String APP_PREFERENCES_HAS_BRACELET = "HasBracelet";        //наличие браслета
     public static final String APP_PREFERENCES_TODAY_SLEEP = "SleepTimeToday";     //сон в конкретно сегодняшний день
     public static final String APP_PREFERENCES_BRACELET_SLEEP_CHECK = "BraceleteSleepTimeToday";     //сон в конкретно сегодняшний день по браслету
-    public static final String APP_PREFERENCES_ROTATION_NORMAL = "RotationSpeedCounter";     //сон в конкретно сегодняшний день по браслету
+    public static final String APP_PREFERENCES_ROTATION_NORMAL = "RotationSpeedCounter";     //отзеркаливание скорости
     public static final String APP_PREFERENCES_USABLE_SOUND = "Sound";     //хранит выбранный звук для режима сна и смешанного режима
     public static final String APP_PREFERENCES_COLOR_PREFERED = "ColorSpeed";     //цвет проекции
+    public static final String APP_PREFERENCES_PROECTION_THEME = "ProectionTheme";     //фон для проекции
     public static final String APP_PREFERENCES_SPEED_NOTIFICATION = "ProectionSounds";     //Содержит информацию о наличии оповещений об ограничениях скорости
     public static final String APP_PREFERENCES_MULTI_MODE = "MultiModeInfo";     //Содержит информацию о режиме работы
 
@@ -141,6 +142,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
     }
 
+    class WriteFalseMultiModeMain extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected Void doInBackground(Void... voids) {
+            myData = getSharedPreferences(APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = myData.edit();
+            editor.putString(APP_PREFERENCES_MULTI_MODE,"false");
+            editor.apply();
+            return null;
+        }
+    }
     class noBracelet extends AsyncTask<Void,Void,Void>{
 
         @Override
@@ -191,6 +202,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
             editor.putString(APP_PREFERENCES_MULTI_MODE,"true");
             editor.apply();
+            editor.putString(APP_PREFERENCES_COLOR_PREFERED,"Оранжевый");
+            editor.apply();
             return null;
         }
     }
@@ -215,6 +228,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 no_miband5.startAnimation(mFadeInAnim);
                 setRotation setRotation = new setRotation();
                 setRotation.execute();
+                WriteFalseMultiModeMain write = new WriteFalseMultiModeMain();
+                write.execute();
                 yes_miband5.setClickable(true);
                 no_miband5.setClickable(true);
 

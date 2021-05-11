@@ -8,14 +8,16 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Spinner;
 import android.widget.VideoView;
 
 public class CustomizationProection extends AppCompatActivity {
 
     VideoView back_video; Button saveToMenuCustom; CheckBox checkSpeedNotif;
-
+    Spinner colorsSpiner;
     SharedPreferences sp;
 
     @Override
@@ -44,6 +46,15 @@ public class CustomizationProection extends AppCompatActivity {
                 finish();
             }
         });
+
+        colorsSpiner = findViewById(R.id.colorsSpinner);
+        colorsSpiner.setBackgroundResource(R.drawable.inset_ripped);
+
+        ArrayAdapter<?> adapter = ArrayAdapter.createFromResource(this, R.array.proectionColors, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        colorsSpiner.setAdapter(adapter);
+        CheckSpinnerColor checkSpinnerColor = new CheckSpinnerColor(); checkSpinnerColor.execute();
     }
 
     class CheckAndSetChekBox extends AsyncTask<Void,Void,Void>{
@@ -76,9 +87,35 @@ public class CustomizationProection extends AppCompatActivity {
                 editor.putString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"false");
                 editor.apply();
             }
+
+            editor.putString(MainActivity.APP_PREFERENCES_COLOR_PREFERED, String.valueOf(colorsSpiner.getSelectedItem()));
+            editor.apply();
             return null;
         }
     }
+    class CheckSpinnerColor extends AsyncTask<Void,Void,Void>{
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            String check = sp.getString(MainActivity.APP_PREFERENCES_COLOR_PREFERED,"");
+
+            if (check.equals("Белый")){colorsSpiner.setSelection(0);}
+            if (check.equals("Оранжевый")){colorsSpiner.setSelection(1);}
+            if (check.equals("Голубой")){colorsSpiner.setSelection(2);}
+            if (check.equals("Красный")){colorsSpiner.setSelection(3);}
+            if (check.equals("Зеленый")){colorsSpiner.setSelection(4);}
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            return null;
+        }
+    }
+
+
+
     @Override
     protected void onResume() {
         back_video.resume();

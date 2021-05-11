@@ -10,5 +10,8 @@
     <color name="khaki">#F0E68C</color>
     <color name="light_orange">#FFA07A</color>
     <color name="bad_red">#DC143C</color>
+    <color name="proection_red">#FF0000</color>
     <color name="my_orange">#FFDEAD</color>
+    <color name="proection_blue">#00FFFF</color>
+    <color name="proection_green">#7CFC00</color>
 </resources>

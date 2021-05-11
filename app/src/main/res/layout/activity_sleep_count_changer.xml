@@ -28,34 +28,33 @@
         android:id="@+id/toMenu"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="550dp"
+        android:layout_marginBottom="89dp"
         android:text="OK" />
 
     <TextView
-        android:alpha="0.8"
         android:id="@+id/defaultSleep"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/seekBar"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="390dp"
+        android:layout_marginBottom="40dp"
+        android:alpha="0.8"
         android:textColor="@color/white"
-        android:textSize="50sp"
-        />
+        android:textSize="50sp" />
 
     <SeekBar
-        android:progressBackgroundTint="@color/light_orange"
-        android:progress="8"
         android:id="@+id/seekBar"
         android:layout_width="300dp"
         android:layout_height="50dp"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="300dp"
+        android:layout_above="@+id/toMenu"
         android:layout_centerHorizontal="true"
+        android:layout_marginBottom="89dp"
         android:max="12"
         android:outlineAmbientShadowColor="@color/white"
-        android:outlineSpotShadowColor="@color/white" />
+        android:outlineSpotShadowColor="@color/white"
+        android:progress="8"
+        android:progressBackgroundTint="@color/light_orange" />
 
 </RelativeLayout>
