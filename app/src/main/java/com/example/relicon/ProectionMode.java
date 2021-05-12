@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     int countSound40 = 0; int countSound60 = 0; int countSound90 = 0; int countSount110 = 0;
     String checker;
     SharedPreferences sp;
+    ImageView proection_background;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +50,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
 
-
+        proection_background = findViewById(R.id.proection_background);
         //SharedPreferences.Editor editor = sp.edit();
 
         if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0")) {
@@ -60,7 +62,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             speedValue.setRotationY(0);
             kmh.setRotationY(0);
         }
-        CheckCurrentColor checkCurrentColor = new CheckCurrentColor();
+        CheckCurrentColorAndTheme checkCurrentColor = new CheckCurrentColorAndTheme();
         checkCurrentColor.execute();
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -104,7 +106,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             wakeup = (TextView) findViewById(R.id.wakeup2);
             wakeup.setText( wakeupPhrases[ index ] );
         }
-        
+
 
     }
 
@@ -288,7 +290,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             return null;
         }
     }
-    class CheckCurrentColor extends AsyncTask<Void,Void,Void>{
+    class CheckCurrentColorAndTheme extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -306,6 +308,14 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             if (check.equals("Зеленый")){speedValue.setTextColor(getResources().getColor(R.color.proection_green));
                 kmh.setTextColor(getResources().getColor(R.color.proection_green));}
 
+            String theme = sp.getString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"");
+
+
+            if(theme.equals("Theme1")){proection_background.setImageResource(R.drawable.first_backround);}
+            if(theme.equals("Theme2")){proection_background.setImageResource(R.drawable.second_background);}
+            if(theme.equals("Theme3")){proection_background.setImageResource(R.drawable.third_background);}
+            if(theme.equals("Theme4")){proection_background.setImageResource(R.drawable.fourth_background);}
+            if(theme.equals("Theme5")){proection_background.setImageResource(R.drawable.fifths_background);}
         }
 
         @Override

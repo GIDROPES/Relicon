@@ -204,6 +204,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             editor.apply();
             editor.putString(APP_PREFERENCES_COLOR_PREFERED,"Оранжевый");
             editor.apply();
+            editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme1");
+            editor.apply();
             return null;
         }
     }

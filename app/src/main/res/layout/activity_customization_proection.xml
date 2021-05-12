@@ -28,7 +28,6 @@
         android:id="@+id/checkSpeedNotif"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="35dp"
@@ -65,5 +64,107 @@
         android:layout_marginTop="35dp"
         android:layout_marginEnd="27dp"
         android:entries="@array/proectionColors" />
+
+    <ImageView
+        android:id="@+id/firstBack"
+        android:layout_width="100dp"
+        android:layout_height="170dp"
+        android:layout_below="@+id/changeColor"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="35dp"
+        android:src="@drawable/first_backround"/>
+
+    <ImageView
+        android:id="@+id/secondBack"
+        android:layout_width="100dp"
+        android:layout_height="170dp"
+        android:layout_below="@+id/changeColor"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="75dp"
+        android:src="@drawable/second_background"/>
+
+    <ImageView
+        android:id="@+id/thirdBack"
+        android:layout_width="100dp"
+        android:layout_height="170dp"
+        android:layout_below="@+id/firstBack"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="20dp"
+        android:src="@drawable/third_background"/>
+
+    <ImageView
+        android:id="@+id/fourhBack"
+        android:layout_width="100dp"
+        android:layout_height="170dp"
+        android:layout_below="@+id/secondBack"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="75dp"
+        android:src="@drawable/fourth_background"/>
+
+    <CheckBox
+        android:id="@+id/checkTheme1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/firstBack"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@+id/firstBack"
+        android:theme="@style/MyCheckBox" />
+
+    <CheckBox
+        android:id="@+id/checkTheme2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/secondBack"
+        android:layout_marginStart="-50dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@+id/secondBack"
+        android:theme="@style/MyCheckBox" />
+
+    <CheckBox
+        android:id="@+id/checkTheme3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/thirdBack"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@+id/thirdBack"
+        android:theme="@style/MyCheckBox" />
+    <CheckBox
+        android:id="@+id/checkTheme4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/fourhBack"
+        android:layout_marginStart="-50dp"
+        android:layout_marginTop="50dp"
+        android:layout_toEndOf="@+id/fourhBack"
+        android:theme="@style/MyCheckBox" />
+
+    <CheckBox
+        android:id="@+id/checkTheme5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fifthBack"
+        android:layout_marginStart="13dp"
+        android:layout_marginBottom="-6dp"
+        android:layout_toEndOf="@+id/fifthBack"
+        android:theme="@style/MyCheckBox" />
+
+    <TextView
+        android:id="@+id/fifthBack"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/saveToMenuCustom"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="-30dp"
+        android:layout_toEndOf="@+id/saveToMenuCustom"
+        android:text="Простой черный"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
 
 </RelativeLayout>

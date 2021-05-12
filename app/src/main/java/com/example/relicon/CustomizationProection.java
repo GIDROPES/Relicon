@@ -11,7 +11,9 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 public class CustomizationProection extends AppCompatActivity {
@@ -20,6 +22,9 @@ public class CustomizationProection extends AppCompatActivity {
     Spinner colorsSpiner;
     SharedPreferences sp;
 
+    CheckBox checkTheme1, checkTheme2, checkTheme3, checkTheme4, checkTheme5;
+    ImageView firstBack, secondBack, thirdBack, fourthBack;
+    TextView fifthBack;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +59,116 @@ public class CustomizationProection extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         colorsSpiner.setAdapter(adapter);
-        CheckSpinnerColor checkSpinnerColor = new CheckSpinnerColor(); checkSpinnerColor.execute();
+
+
+        checkTheme1 = findViewById(R.id.checkTheme1); checkTheme2 = findViewById(R.id.checkTheme2);
+        checkTheme3 = findViewById(R.id.checkTheme3); checkTheme4 = findViewById(R.id.checkTheme4);
+        checkTheme5 = findViewById(R.id.checkTheme5);
+
+        firstBack = findViewById(R.id.firstBack); secondBack = findViewById(R.id.secondBack);
+        thirdBack = findViewById(R.id.thirdBack); fourthBack = findViewById(R.id.fourhBack);
+        fifthBack = findViewById(R.id.fifthBack); //это текст если что, так на заметку
+
+        checkTheme1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+        });
+        firstBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme1.setChecked(true);
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+        });
+
+        checkTheme2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme1.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+        });
+        secondBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme1.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+                checkTheme2.setChecked(true);
+            }
+        });
+
+        checkTheme3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme1.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+        });
+        thirdBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme1.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+                checkTheme3.setChecked(true);
+            }
+        });
+
+        checkTheme4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme1.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+        });
+        fourthBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme1.setChecked(false);
+                checkTheme5.setChecked(false);
+                checkTheme4.setChecked(true);
+            }
+        });
+
+        checkTheme5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme1.setChecked(false);
+            }
+        });
+        fifthBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme1.setChecked(false);
+                checkTheme5.setChecked(true);
+            }
+        });
+        CheckSpinnerColorAndTheme checkSpinnerColor = new CheckSpinnerColorAndTheme(); checkSpinnerColor.execute();
     }
 
     class CheckAndSetChekBox extends AsyncTask<Void,Void,Void>{
@@ -90,10 +204,17 @@ public class CustomizationProection extends AppCompatActivity {
 
             editor.putString(MainActivity.APP_PREFERENCES_COLOR_PREFERED, String.valueOf(colorsSpiner.getSelectedItem()));
             editor.apply();
+
+            if (checkTheme1.isChecked()){ editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme1"); editor.apply();}
+            if (checkTheme2.isChecked()){ editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme2"); editor.apply();}
+            if (checkTheme3.isChecked()){ editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme3"); editor.apply();}
+            if (checkTheme4.isChecked()){ editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme4"); editor.apply();}
+            if (checkTheme5.isChecked()){ editor.putString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"Theme5"); editor.apply();}
+
             return null;
         }
     }
-    class CheckSpinnerColor extends AsyncTask<Void,Void,Void>{
+    class CheckSpinnerColorAndTheme extends AsyncTask<Void,Void,Void>{
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -106,6 +227,41 @@ public class CustomizationProection extends AppCompatActivity {
             if (check.equals("Красный")){colorsSpiner.setSelection(3);}
             if (check.equals("Зеленый")){colorsSpiner.setSelection(4);}
 
+            String theme = sp.getString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"");
+            if(theme.equals("Theme1")){
+                checkTheme1.setChecked(true);
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+            if(theme.equals("Theme2")){
+                checkTheme1.setChecked(false);
+                checkTheme2.setChecked(true);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+            if(theme.equals("Theme3")){
+                checkTheme1.setChecked(false);
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(true);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(false);
+            }
+            if(theme.equals("Theme4")){
+                checkTheme1.setChecked(false);
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(true);
+                checkTheme5.setChecked(false);
+            }
+            if(theme.equals("Theme5")){
+                checkTheme1.setChecked(false);
+                checkTheme2.setChecked(false);
+                checkTheme3.setChecked(false);
+                checkTheme4.setChecked(false);
+                checkTheme5.setChecked(true);}
         }
 
         @Override
