@@ -241,14 +241,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             else {
                 if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("YES")){
                     Intent intent = new Intent(this, TryingConnectionActivity.class);
-                    //setRotation sr = new setRotation();
-                    //sr.execute();
+                    WriteFalseMultiModeMain write = new WriteFalseMultiModeMain();
+                    write.execute();
                     startActivity(intent);
                 }
                 if(myData.getString(APP_PREFERENCES_HAS_BRACELET,"").equals("NO")) {
                     Intent intent = new Intent(this, TodaySleepHours.class);
-                    //noBracelet noBracelet = new noBracelet();
-                    //noBracelet.execute();
+                    WriteFalseMultiModeMain write = new WriteFalseMultiModeMain();
+                    write.execute();
                     startActivity(intent);
                 }
             }

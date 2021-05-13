@@ -181,6 +181,12 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
     }
     //-------------------------------------------------------
 
+
+    @Override
+    public void onBackPressed() {
+
+    }
+
     @Override
     protected void onResume() {
         back_video.resume();
