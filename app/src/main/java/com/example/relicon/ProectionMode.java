@@ -49,7 +49,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
-
+        wakeup = findViewById(R.id.wakeup2);
         proection_background = findViewById(R.id.proection_background);
         //SharedPreferences.Editor editor = sp.edit();
 
@@ -91,7 +91,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
-                //exit = 1;
                 WriteMultiModeFalse wt = new WriteMultiModeFalse();
                 wt.execute();
                 startActivity(intent);
@@ -107,17 +106,21 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             wakeup.setText( wakeupPhrases[ index ] );
         }
 
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")){
+            wakeup.setVisibility(View.INVISIBLE);
+        }
 
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
         SoundNotif soundNot = new SoundNotif();
-
+        SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
         if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
-            wakeup = findViewById(R.id.wakeup2);
-            SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
             soundPlayingTask.execute();
+        }
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")){
+            soundPlayingTask.cancel(true);
         }
 
         speedValue = (TextView) findViewById(R.id.speedValue);
@@ -283,8 +286,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         protected Void doInBackground(Void... voids) {
             SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.remove(MainActivity.APP_PREFERENCES_MULTI_MODE);
-            editor.apply();
             editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE,"false");
             editor.apply();
             return null;

@@ -61,6 +61,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, ProectionMode.class);
+                WriteMultiModeFalseMenu writeMMF = new WriteMultiModeFalseMenu();
                 MenuActivity.this.startActivity(intent);
                 finish();
             }
@@ -76,60 +77,62 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
-        StrangeTask strangeTask = new StrangeTask();
-        strangeTask.execute();
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+                String inf = sp.getString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,"");
+
+
+                if (sp.contains(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP)){
+                    if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Default")) {
+                        sleepInfo.setText("Вы спали ~ " + inf + " часов");
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Less")) {
+                        sleepInfo.setText("Вы спали меньше " + inf + " часов");
+                        sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
+                        proection_butt.setClickable(false);
+                        proection_butt.setAlpha(0.3f); proection_title.setAlpha(0.3f);
+
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("More")) {
+                        sleepInfo.setText("Вы спали больше " + inf + " часов");
+                        sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
+                    }
+                }
+
+                if (sp.contains(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK)){
+
+                    String infGoogleFitSleep = sp.getString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK,"");
+                    Long GFSleepHours = Long.parseLong(infGoogleFitSleep);
+
+                    if (GFSleepHours < 8 && GFSleepHours > 5){
+                        sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                        sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
+                    }
+                    if (GFSleepHours <= 5 ){
+                        sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                        sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
+                        proection_butt.setClickable(false);
+                        proection_butt.setAlpha(0.3f); proection_title.setAlpha(0.3f);
+                    }
+                    if (GFSleepHours >= 8 ){
+                        sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
+                        sleepInfo.setTextColor(getResources().getColor(R.color.white));
+                    }
+                }
+            }
+        });
 
     }
-
-    class StrangeTask extends AsyncTask<Void,Void,Void>{
+    class WriteMultiModeFalseMenu extends AsyncTask<Void,Void,Void>{
 
         @Override
         protected Void doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
-            String inf = sp.getString(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP,"");
-
-
-            if (sp.contains(MainActivity.APP_PREFERENCES_DEFAULT_SLEEP)){
-                if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Default")) {
-                    sleepInfo.setText("Вы спали ~ " + inf + " часов");
-                }
-                if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("Less")) {
-                    sleepInfo.setText("Вы спали меньше " + inf + " часов");
-                    sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
-                    proection_butt.setClickable(false);
-                    proection_butt.setAlpha(0.3f); proection_title.setAlpha(0.3f);
-
-                }
-                if (sp.getString(MainActivity.APP_PREFERENCES_TODAY_SLEEP,"").equals("More")) {
-                    sleepInfo.setText("Вы спали больше " + inf + " часов");
-                    sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
-                }
-            }
-
-            if (sp.contains(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK)){
-
-                String infGoogleFitSleep = sp.getString(MainActivity.APP_PREFERENCES_BRACELET_SLEEP_CHECK,"");
-                Long GFSleepHours = Long.parseLong(infGoogleFitSleep);
-
-                if (GFSleepHours < 8 && GFSleepHours > 5){
-                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
-                    sleepInfo.setTextColor(getResources().getColor(R.color.khaki));
-                }
-                if (GFSleepHours <= 5 ){
-                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
-                    sleepInfo.setTextColor(getResources().getColor(R.color.bad_red));
-                    proection_butt.setClickable(false);
-                    proection_butt.setAlpha(0.3f); proection_title.setAlpha(0.3f);
-                }
-                if (GFSleepHours >= 8 ){
-                    sleepInfo.setText("Вы спали " + infGoogleFitSleep + " часов");
-                    sleepInfo.setTextColor(getResources().getColor(R.color.white));
-                }
-            }
-
-
-
-
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences.Editor editor = sp.edit();
+            editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE,"false");
+            editor.apply();
             return null;
         }
     }
