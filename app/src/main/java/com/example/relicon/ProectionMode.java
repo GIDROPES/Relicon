@@ -1,10 +1,12 @@
 package com.example.relicon;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +17,7 @@ import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
@@ -25,12 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class ProectionMode extends AppCompatActivity implements LocationListener {
+    Timer timer;
     public static int exit = 0;
     Animation mFadeInAnim, mFadeOutAnim;
-    private LocationManager locationManager; public static MediaPlayer mediaPlayer;
+    private LocationManager locationManager; static MediaPlayer mediaPlayer;
     TextView speedValue, kmh, wakeup;
     int roundedCurrentSpeed;
     public static int normalRotationMode = 0;
@@ -42,28 +48,46 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     String checker;
     SharedPreferences sp;
     ImageView proection_background;
+    SoundPlayingTask soundPlayingTask;
+    String checkerForMultiMode;
+
+    static Integer iter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_proection_mode);
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
         speedValue = (TextView) findViewById(R.id.speedValue);
         kmh = (TextView) findViewById(R.id.kmh);
         wakeup = findViewById(R.id.wakeup2);
         proection_background = findViewById(R.id.proection_background);
         //SharedPreferences.Editor editor = sp.edit();
 
-        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("0")) {
+        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL, "").equals("0")) {
             speedValue.setRotationY(-180f);
             kmh.setRotationY(-180f);
         }
-        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL,"").equals("1"))
-        {
+        if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL, "").equals("1")) {
             speedValue.setRotationY(0);
             kmh.setRotationY(0);
         }
+
         CheckCurrentColorAndTheme checkCurrentColor = new CheckCurrentColorAndTheme();
         checkCurrentColor.execute();
+        CheckMultiModeIsWorking chmt = new CheckMultiModeIsWorking();
+        chmt.execute();
+
+        Random random = new Random();
+        int index = random.nextInt(wakeupPhrases.length);
+
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
+            wakeup = (TextView) findViewById(R.id.wakeup2);
+            wakeup.setText(wakeupPhrases[index]);
+        }
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")) {
+            wakeup.setVisibility(View.INVISIBLE);
+        }
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
 
@@ -85,44 +109,34 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
         speedValue = (TextView) findViewById(R.id.speedValue);
 
-        backToMenu = (Button) findViewById(R.id.backToMenu);
+        backToMenu = (Button) findViewById(R.id.backToMenu1);
 
         backToMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 WriteMultiModeFalse wt = new WriteMultiModeFalse();
                 wt.execute();
+                soundPlayingTask.cancel(true);
+                locationManager.removeUpdates(ProectionMode.this::onLocationChanged);
+                Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 startActivity(intent);
-                finish();
+                finishAffinity();
             }
         });
-
-        Random random = new Random();
-        int index = random.nextInt(wakeupPhrases.length);
-
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
-            wakeup = (TextView) findViewById(R.id.wakeup2);
-            wakeup.setText( wakeupPhrases[ index ] );
-        }
-
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")){
-            wakeup.setVisibility(View.INVISIBLE);
-        }
 
     }
 
     @Override
     public void onLocationChanged(@NonNull Location location) {
         SoundNotif soundNot = new SoundNotif();
-        SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
-            soundPlayingTask.execute();
-        }
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")){
-            soundPlayingTask.cancel(true);
-        }
+        soundPlayingTask = new SoundPlayingTask();
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+                if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
+                    Log.i("TAGt", "Dodododo");
+                    soundPlayingTask.execute();
+            }
 
+        //вот это не трогаем
         speedValue = (TextView) findViewById(R.id.speedValue);
 
         if (location == null) {
@@ -140,6 +154,22 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                 soundNot.execute();
                 }
             }
+        }
+    }
+
+    class Sounding extends Service{
+        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
+        Integer results[] = {2,1,78,14,6,7};
+        @Nullable
+        @Override
+        public IBinder onBind(Intent intent) {
+            return null;
+        }
+
+        @Override
+        public void onCreate() {
+            super.onCreate();
+
         }
     }
 
@@ -162,50 +192,58 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         @Override
         protected Void doInBackground(Void... voids) {
 
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+                    SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
 
-                mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
-                mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
+                    mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
+                    mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
 
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                wakeup.startAnimation(mFadeInAnim);
-
-
-                Random randomT = new Random();
-                int result = results[randomT.nextInt(results.length)];
-
-                if(result == 1) {
-                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("0")) {
-                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[0]);
-                        mediaPlayer.start();
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(1300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
-                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("1")) {
-                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[1]);
-                        mediaPlayer.start();
-                    }
-                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("2")) {
-                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[2]);
-                        mediaPlayer.start();
-                    }
-                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("3")) {
-                        mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[3]);
-                        mediaPlayer.start();
-                    }
-                }
+                    wakeup.startAnimation(mFadeInAnim);
 
-                try {
-                    TimeUnit.MILLISECONDS.sleep(1300);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                wakeup.startAnimation(mFadeOutAnim);
+
+                    Random randomT = new Random();
+                    int result = results[randomT.nextInt(results.length)];
+
+                    if(result == 1) {
+                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("0")) {
+                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[0]);
+                            mediaPlayer.start();
+                        }
+                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("1")) {
+                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[1]);
+                            mediaPlayer.start();
+                        }
+                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("2")) {
+                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[2]);
+                            mediaPlayer.start();
+                        }
+                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("3")) {
+                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[3]);
+                            mediaPlayer.start();
+                        }
+                    }
+
+                    try {
+                        TimeUnit.MILLISECONDS.sleep(1300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    wakeup.startAnimation(mFadeOutAnim);
+
+
+
 
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
         }
     }
     class CheckSoundNotif extends AsyncTask<Void,Void,Void>{
@@ -324,6 +362,18 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             return null;
         }
     }
+    class CheckMultiModeIsWorking extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+
+            if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) checkerForMultiMode = "true";
+            if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")) checkerForMultiMode = "false";
+            return null;
+        }
+    }
+
     private void doStuff() {
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
