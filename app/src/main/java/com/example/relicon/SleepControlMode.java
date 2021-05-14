@@ -19,9 +19,22 @@ import android.widget.VideoView;
 import com.google.android.gms.tasks.Task;
 
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class SleepControlMode extends AppCompatActivity {
+
+    String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
+            ,"Не спать","Сосредоточьтесь на дороге","Осторожнее на дорогах"};
+    Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
+    Integer results[] = {2,1,78,14,6,7};
+    //int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
+
+    Random random = new Random();
+    int index = random.nextInt(wakeupPhrases.length);
+
+
     Animation mFadeInAnim, mFadeOutAnim;
     public static MediaPlayer mediaPlayer;
     VideoView back_video; TextView wakeup;  Button backToMenuSleep;
@@ -31,6 +44,8 @@ public class SleepControlMode extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sleep_control_mode);
         exit = 0;
+        SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+
         back_video = (VideoView) findViewById(R.id.back_video);
         String path = "android.resource://";
         Uri uri = Uri.parse(path + getPackageName() + "/" + R.raw.background2);
@@ -40,20 +55,69 @@ public class SleepControlMode extends AppCompatActivity {
 
         backToMenuSleep = findViewById(R.id.backToMenuSleep);
 
+
+        //SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
+        //soundPlayingTask.execute();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                wakeup = (TextView) findViewById(R.id.wakeup);
+                wakeup.setText( wakeupPhrases[ index ] );
+
+                mFadeInAnim = AnimationUtils.loadAnimation(SleepControlMode.this,R.anim.fadein);
+                mFadeOutAnim = AnimationUtils.loadAnimation(SleepControlMode.this,R.anim.fadeout);
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                wakeup.startAnimation(mFadeInAnim);
+
+
+                Random randomT = new Random();
+                int result = results[randomT.nextInt(results.length)];
+                if(result == 1) {
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("0")) {
+                        mediaPlayer = MediaPlayer.create(SleepControlMode.this, sounds[0]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("1")) {
+                        mediaPlayer = MediaPlayer.create(SleepControlMode.this, sounds[1]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("2")) {
+                        mediaPlayer = MediaPlayer.create(SleepControlMode.this, sounds[2]);
+                        mediaPlayer.start();
+                    }
+                    if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("3")) {
+                        mediaPlayer = MediaPlayer.create(SleepControlMode.this, sounds[3]);
+                        mediaPlayer.start();
+                    }
+                }
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                wakeup.startAnimation(mFadeOutAnim);
+            }
+        };
+
+        Timer timer = new Timer();
+        timer.schedule(timerTask,0,2600);
+
         backToMenuSleep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SleepControlMode.this, MenuActivity.class);
                 exit = 1;
+                timer.cancel();
                 startActivity(intent);
                 finish();
             }
         });
-
-        SoundPlayingTask soundPlayingTask = new SoundPlayingTask();
-        soundPlayingTask.execute();
-
-
     }
 
     class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
@@ -78,8 +142,8 @@ public class SleepControlMode extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... voids) {
-
             SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+
 
            // wakeup = (TextView) findViewById(R.id.wakeup);
 

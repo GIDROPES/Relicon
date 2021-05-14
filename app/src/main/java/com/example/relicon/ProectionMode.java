@@ -35,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 public class ProectionMode extends AppCompatActivity implements LocationListener {
     Integer[] sounds = {R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
     public static int exit = 0;
+
     Animation mFadeInAnim, mFadeOutAnim;
     private LocationManager locationManager;
     static MediaPlayer mediaPlayer1;
@@ -44,6 +45,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     TextView speedValue, kmh, wakeup;
     int roundedCurrentSpeed;
     public static int normalRotationMode = 0;
+
     String[] wakeupPhrases = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
             , "Не спать", "Сосредоточьтесь на дороге", "Осторожнее на дорогах"};
     // public static int MULTI_MODE;
@@ -61,9 +63,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     private final int FASTEST_INTERVAL = 2000; // use whatever suits you
     private Location currentLocation = null;
     private long locationUpdatedAt = Long.MIN_VALUE;
-
-    static Integer iter = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,7 +130,6 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             public void onClick(View v) {
                 WriteMultiModeFalse wt = new WriteMultiModeFalse();
                 wt.execute();
-                // soundPlayingTask.cancel(true);
                 locationManager.removeUpdates(ProectionMode.this);
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 startActivity(intent);
@@ -152,7 +150,9 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     @Override
     public void onLocationChanged(@NonNull Location location) {
         speedValue = (TextView) findViewById(R.id.speedValue);
+
         boolean updateLocationandReport = false;
+
         if (currentLocation == null) {
             currentLocation = location;
             locationUpdatedAt = System.currentTimeMillis();
@@ -168,16 +168,15 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             }
         }
         if (updateLocationandReport) {
-            location.setSpeed(new Random().nextInt(3));
-
 
             float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
             roundedCurrentSpeed = (int) currentSpeed;
             Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
+
             if (roundedCurrentSpeed < 9) {
                 speedValue.setText(String.valueOf(0));
             }
-            //speedValue.setText(String.format("%.2f", currentSpeed));
+
             else {
                 CheckSoundNotif chsk = new CheckSoundNotif();
                 AnimTask a = new AnimTask();
@@ -188,25 +187,26 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                     Integer[] results = {2, 1, 78, 14, 6, 7};
                     int result = results[randomT.nextInt(results.length)];
                     String res = sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "");
-                    switch (res) {
-                        case "0":
+                    if(result == 1) {
+                        switch (res) {
+                            case "0":
 
-                            mediaPlayer1.start();
-                            break;
-                        case "1":
+                                mediaPlayer1.start();
+                                break;
+                            case "1":
 
-                            mediaPlayer2.start();
-                            break;
-                        case "2":
+                                mediaPlayer2.start();
+                                break;
+                            case "2":
 
-                            mediaPlayer3.start();
-                            break;
-                        case "3":
+                                mediaPlayer3.start();
+                                break;
+                            case "3":
 
-                            mediaPlayer4.start();
-                            break;
+                                mediaPlayer4.start();
+                                break;
+                        }
                     }
-
                     a.execute();
                 }
 
