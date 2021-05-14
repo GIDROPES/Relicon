@@ -33,25 +33,37 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class ProectionMode extends AppCompatActivity implements LocationListener {
-    Timer timer;
+    Integer[] sounds = {R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
     public static int exit = 0;
     Animation mFadeInAnim, mFadeOutAnim;
-    private LocationManager locationManager; static MediaPlayer mediaPlayer;
+    private LocationManager locationManager;
+    static MediaPlayer mediaPlayer1;
+    static MediaPlayer mediaPlayer2;
+    static MediaPlayer mediaPlayer3;
+    static MediaPlayer mediaPlayer4;
     TextView speedValue, kmh, wakeup;
     int roundedCurrentSpeed;
     public static int normalRotationMode = 0;
-    private Button backToMenu;
-    String wakeupPhrases[] = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
-            ,"Не спать","Сосредоточьтесь на дороге","Осторожнее на дорогах"};
-   // public static int MULTI_MODE;
-    int countSound40 = 0; int countSound60 = 0; int countSound90 = 0; int countSount110 = 0;
+    String[] wakeupPhrases = {"Ваши засыпаний под контролем", "Я позабочусь о вашей безопасности", "Будьте внимательны"
+            , "Не спать", "Сосредоточьтесь на дороге", "Осторожнее на дорогах"};
+    // public static int MULTI_MODE;
+    int countSound40 = 0;
+    int countSound60 = 0;
+    int countSound90 = 0;
+    int countSount110 = 0;
     String checker;
     SharedPreferences sp;
     ImageView proection_background;
-    SoundPlayingTask soundPlayingTask;
+
     String checkerForMultiMode;
 
+
+    private final int FASTEST_INTERVAL = 2000; // use whatever suits you
+    private Location currentLocation = null;
+    private long locationUpdatedAt = Long.MIN_VALUE;
+
     static Integer iter = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +75,9 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         wakeup = findViewById(R.id.wakeup2);
         proection_background = findViewById(R.id.proection_background);
         //SharedPreferences.Editor editor = sp.edit();
+
+
+        mediaPlayesPrepare();
 
         if (sp.getString(MainActivity.APP_PREFERENCES_ROTATION_NORMAL, "").equals("0")) {
             speedValue.setRotationY(-180f);
@@ -81,11 +96,11 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
         Random random = new Random();
         int index = random.nextInt(wakeupPhrases.length);
 
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE, "").equals("true")) {
             wakeup = (TextView) findViewById(R.id.wakeup2);
             wakeup.setText(wakeupPhrases[index]);
         }
-        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")) {
+        if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE, "").equals("false")) {
             wakeup.setVisibility(View.INVISIBLE);
         }
 
@@ -105,164 +120,150 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
         locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        this.onLocationChanged(null);
+
 
         speedValue = (TextView) findViewById(R.id.speedValue);
 
-        backToMenu = (Button) findViewById(R.id.backToMenu1);
+        Button backToMenu = (Button) findViewById(R.id.backToMenu1);
 
         backToMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 WriteMultiModeFalse wt = new WriteMultiModeFalse();
                 wt.execute();
-                soundPlayingTask.cancel(true);
-                locationManager.removeUpdates(ProectionMode.this::onLocationChanged);
+                // soundPlayingTask.cancel(true);
+                locationManager.removeUpdates(ProectionMode.this);
                 Intent intent = new Intent(ProectionMode.this, MenuActivity.class);
                 startActivity(intent);
-                finishAffinity();
+                finish();
             }
         });
 
     }
 
+    private void mediaPlayesPrepare() {
+        mediaPlayer1 = MediaPlayer.create(ProectionMode.this, sounds[0]);
+        mediaPlayer2 = MediaPlayer.create(ProectionMode.this, sounds[1]);
+        mediaPlayer3 = MediaPlayer.create(ProectionMode.this, sounds[2]);
+        mediaPlayer4 = MediaPlayer.create(ProectionMode.this, sounds[3]);
+
+    }
+
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        SoundNotif soundNot = new SoundNotif();
-        soundPlayingTask = new SoundPlayingTask();
-        sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
-                if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) {
-                    Log.i("TAGt", "Dodododo");
-                    soundPlayingTask.execute();
-            }
-
-        //вот это не трогаем
         speedValue = (TextView) findViewById(R.id.speedValue);
-
-        if (location == null) {
-            speedValue.setText("-");
+        boolean updateLocationandReport = false;
+        if (currentLocation == null) {
+            currentLocation = location;
+            locationUpdatedAt = System.currentTimeMillis();
+            updateLocationandReport = true;
         } else {
+            long secondsElapsed = TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - locationUpdatedAt);
+            if (secondsElapsed >= TimeUnit.MILLISECONDS.toSeconds(FASTEST_INTERVAL)) {
+                // check location accuracy here
+                currentLocation = location;
+
+                locationUpdatedAt = System.currentTimeMillis();
+                updateLocationandReport = true;
+            }
+        }
+        if (updateLocationandReport) {
+            location.setSpeed(new Random().nextInt(3));
+
+
             float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
             roundedCurrentSpeed = (int) currentSpeed;
-            if (roundedCurrentSpeed < 9 ) {speedValue.setText(String.valueOf(0));}
-                //speedValue.setText(String.format("%.2f", currentSpeed));
+            Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
+            if (roundedCurrentSpeed < 9) {
+                speedValue.setText(String.valueOf(0));
+            }
+            //speedValue.setText(String.format("%.2f", currentSpeed));
             else {
                 CheckSoundNotif chsk = new CheckSoundNotif();
-                chsk.execute();
+                AnimTask a = new AnimTask();
                 speedValue.setText(String.valueOf(roundedCurrentSpeed));
-            if(checker.equals("true")) {
-                soundNot.execute();
+                if (checkerForMultiMode.equals("true")) {
+                    // Log.i("TAGt", String.valueOf(flag));
+                    Random randomT = new Random();
+                    Integer[] results = {2, 1, 78, 14, 6, 7};
+                    int result = results[randomT.nextInt(results.length)];
+                    String res = sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "");
+                    switch (res) {
+                        case "0":
+
+                            mediaPlayer1.start();
+                            break;
+                        case "1":
+
+                            mediaPlayer2.start();
+                            break;
+                        case "2":
+
+                            mediaPlayer3.start();
+                            break;
+                        case "3":
+
+                            mediaPlayer4.start();
+                            break;
+                    }
+
+                    a.execute();
                 }
+
+
             }
         }
     }
 
-    class Sounding extends Service{
-        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
-        Integer results[] = {2,1,78,14,6,7};
-        @Nullable
-        @Override
-        public IBinder onBind(Intent intent) {
-            return null;
-        }
 
-        @Override
-        public void onCreate() {
-            super.onCreate();
+    class AnimTask extends AsyncTask<Void, Void, Void> {
 
-        }
-    }
-
-    class SoundPlayingTask extends AsyncTask<Void,Void,Void>{
-
-
-        Integer sounds[] = { R.raw.sound2, R.raw.sound3, R.raw.sound4, R.raw.sound1};
-        Integer results[] = {2,1,78,14,6,7};
-        //int times[] = {22000, 30000, 15000, 17000, 25000, 10000};
-
-
-
-
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
 
         @Override
         protected Void doInBackground(Void... voids) {
-
-                    SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-
-                    mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadein);
-                    mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this,R.anim.fadeout);
-
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(1300);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    wakeup.startAnimation(mFadeInAnim);
+            mFadeInAnim = AnimationUtils.loadAnimation(ProectionMode.this, R.anim.fadein);
+            mFadeOutAnim = AnimationUtils.loadAnimation(ProectionMode.this, R.anim.fadeout);
+            if (checkerForMultiMode.equals("true")) {
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                wakeup.startAnimation(mFadeInAnim);
 
 
-                    Random randomT = new Random();
-                    int result = results[randomT.nextInt(results.length)];
-
-                    if(result == 1) {
-                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("0")) {
-                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[0]);
-                            mediaPlayer.start();
-                        }
-                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("1")) {
-                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[1]);
-                            mediaPlayer.start();
-                        }
-                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("2")) {
-                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[2]);
-                            mediaPlayer.start();
-                        }
-                        if (sp.getString(MainActivity.APP_PREFERENCES_USABLE_SOUND, "").equals("3")) {
-                            mediaPlayer = MediaPlayer.create(ProectionMode.this, sounds[3]);
-                            mediaPlayer.start();
-                        }
-                    }
-
-                    try {
-                        TimeUnit.MILLISECONDS.sleep(1300);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    wakeup.startAnimation(mFadeOutAnim);
-
-
-
-
-
+                try {
+                    TimeUnit.MILLISECONDS.sleep(1300);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                wakeup.startAnimation(mFadeOutAnim);
+            }
+            Log.i("TAGt", "doInBackground: anim");
             return null;
         }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-        }
     }
-    class CheckSoundNotif extends AsyncTask<Void,Void,Void>{
+
+
+    class CheckSoundNotif extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-            checker = sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"");
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            checker = sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION, "");
             return null;
         }
     }
-    class SoundNotif extends AsyncTask<Void,Void,Void>{
+
+    class SoundNotif extends AsyncTask<Void, Void, Boolean> {
         SharedPreferences sp;
+
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Void... voids) {
             MediaPlayer mp;
             //int exit = 0;
-            sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-            if(sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"").equals("true")) {
+            sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            if (sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION, "").equals("true")) {
                 if (roundedCurrentSpeed <= 39) {
                     countSound40 = 0;
                     countSound60 = 0;
@@ -315,46 +316,70 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
                     countSount110 = 1;
                 }
             }
-            return null;
+            return false;
         }
+
+
     }
-    class WriteMultiModeFalse extends AsyncTask<Void,Void,Void>{
+
+    class WriteMultiModeFalse extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
             SharedPreferences.Editor editor = sp.edit();
-            editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE,"false");
+            editor.putString(MainActivity.APP_PREFERENCES_MULTI_MODE, "false");
             editor.apply();
             return null;
         }
     }
-    class CheckCurrentColorAndTheme extends AsyncTask<Void,Void,Void>{
+
+    class CheckCurrentColorAndTheme extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
-            String check = sp.getString(MainActivity.APP_PREFERENCES_COLOR_PREFERED,"");
+            String check = sp.getString(MainActivity.APP_PREFERENCES_COLOR_PREFERED, "");
 
-            if (check.equals("Белый")){speedValue.setTextColor(getResources().getColor(R.color.white));
-                kmh.setTextColor(getResources().getColor(R.color.white));}
-            if (check.equals("Оранжевый")){speedValue.setTextColor(getResources().getColor(R.color.light_orange));
-                kmh.setTextColor(getResources().getColor(R.color.light_orange));}
-            if (check.equals("Голубой")){speedValue.setTextColor(getResources().getColor(R.color.proection_blue));
-                kmh.setTextColor(getResources().getColor(R.color.proection_blue));}
-            if (check.equals("Красный")){speedValue.setTextColor(getResources().getColor(R.color.proection_red));
-                kmh.setTextColor(getResources().getColor(R.color.proection_red));}
-            if (check.equals("Зеленый")){speedValue.setTextColor(getResources().getColor(R.color.proection_green));
-                kmh.setTextColor(getResources().getColor(R.color.proection_green));}
+            if (check.equals("Белый")) {
+                speedValue.setTextColor(getResources().getColor(R.color.white));
+                kmh.setTextColor(getResources().getColor(R.color.white));
+            }
+            if (check.equals("Оранжевый")) {
+                speedValue.setTextColor(getResources().getColor(R.color.light_orange));
+                kmh.setTextColor(getResources().getColor(R.color.light_orange));
+            }
+            if (check.equals("Голубой")) {
+                speedValue.setTextColor(getResources().getColor(R.color.proection_blue));
+                kmh.setTextColor(getResources().getColor(R.color.proection_blue));
+            }
+            if (check.equals("Красный")) {
+                speedValue.setTextColor(getResources().getColor(R.color.proection_red));
+                kmh.setTextColor(getResources().getColor(R.color.proection_red));
+            }
+            if (check.equals("Зеленый")) {
+                speedValue.setTextColor(getResources().getColor(R.color.proection_green));
+                kmh.setTextColor(getResources().getColor(R.color.proection_green));
+            }
 
-            String theme = sp.getString(MainActivity.APP_PREFERENCES_PROECTION_THEME,"");
+            String theme = sp.getString(MainActivity.APP_PREFERENCES_PROECTION_THEME, "");
 
 
-            if(theme.equals("Theme1")){proection_background.setImageResource(R.drawable.first_backround);}
-            if(theme.equals("Theme2")){proection_background.setImageResource(R.drawable.second_background);}
-            if(theme.equals("Theme3")){proection_background.setImageResource(R.drawable.third_background);}
-            if(theme.equals("Theme4")){proection_background.setImageResource(R.drawable.fourth_background);}
-            if(theme.equals("Theme5")){proection_background.setImageResource(R.drawable.fifths_background);}
+            if (theme.equals("Theme1")) {
+                proection_background.setImageResource(R.drawable.first_backround);
+            }
+            if (theme.equals("Theme2")) {
+                proection_background.setImageResource(R.drawable.second_background);
+            }
+            if (theme.equals("Theme3")) {
+                proection_background.setImageResource(R.drawable.third_background);
+            }
+            if (theme.equals("Theme4")) {
+                proection_background.setImageResource(R.drawable.fourth_background);
+            }
+            if (theme.equals("Theme5")) {
+                proection_background.setImageResource(R.drawable.fifths_background);
+            }
         }
 
         @Override
@@ -362,14 +387,17 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             return null;
         }
     }
-    class CheckMultiModeIsWorking extends AsyncTask<Void,Void,Void>{
+
+    class CheckMultiModeIsWorking extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
-            sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
-
-            if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("true")) checkerForMultiMode = "true";
-            if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE,"").equals("false")) checkerForMultiMode = "false";
+            //sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
+            checkerForMultiMode = sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE, "true");
+            /*if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE, "").equals("true"))
+                checkerForMultiMode = "true";
+            if (sp.getString(MainActivity.APP_PREFERENCES_MULTI_MODE, "").equals("false"))
+                checkerForMultiMode = "false";*/
             return null;
         }
     }
@@ -391,9 +419,9 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             }
             lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             //commented, this is from the old version
-            
+
         }
-        Toast.makeText(this,"Подключение может занять некоторое время", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Подключение может занять некоторое время", Toast.LENGTH_LONG).show();
 
     }
 
