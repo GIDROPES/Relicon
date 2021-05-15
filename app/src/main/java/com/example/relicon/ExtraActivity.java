@@ -95,7 +95,7 @@ public class ExtraActivity extends AppCompatActivity implements View.OnClickList
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            Toast.makeText(ExtraActivity.this,"Вы выбрали звук "+ soundsSpinner.getSelectedItemPosition()+1 , Toast.LENGTH_SHORT).show();
+            Toast.makeText(ExtraActivity.this,"Вы выбрали звук "+ (soundsSpinner.getSelectedItemPosition()+1) , Toast.LENGTH_SHORT).show();
 
             super.onPostExecute(aVoid);
         }
