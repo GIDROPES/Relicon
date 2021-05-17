@@ -171,14 +171,15 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
 
             float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
             roundedCurrentSpeed = (int) currentSpeed;
-            Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
-
+            //Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
+            SoundNotif soundNotif = new SoundNotif();
+            soundNotif.execute();
+            
             if (roundedCurrentSpeed < 9) {
                 speedValue.setText(String.valueOf(0));
             }
 
             else {
-                CheckSoundNotif chsk = new CheckSoundNotif();
                 AnimTask a = new AnimTask();
                 speedValue.setText(String.valueOf(roundedCurrentSpeed));
                 if (checkerForMultiMode.equals("true")) {
@@ -245,15 +246,7 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     }
 
 
-    class CheckSoundNotif extends AsyncTask<Void, Void, Void> {
 
-        @Override
-        protected Void doInBackground(Void... voids) {
-            SharedPreferences sp = getSharedPreferences(MainActivity.APP_PREFERENCES, MODE_PRIVATE);
-            checker = sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION, "");
-            return null;
-        }
-    }
 
     class SoundNotif extends AsyncTask<Void, Void, Boolean> {
         SharedPreferences sp;
