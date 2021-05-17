@@ -150,8 +150,13 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
     @Override
     public void onLocationChanged(@NonNull Location location) {
         speedValue = (TextView) findViewById(R.id.speedValue);
-
+        sp = getSharedPreferences(MainActivity.APP_PREFERENCES,MODE_PRIVATE);
+        boolean checkForNotifications = false;
         boolean updateLocationandReport = false;
+
+        if (sp.getString(MainActivity.APP_PREFERENCES_SPEED_NOTIFICATION,"").equals("true")){
+            checkForNotifications = true;
+        }
 
         if (currentLocation == null) {
             currentLocation = location;
@@ -172,9 +177,11 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
             roundedCurrentSpeed = (int) currentSpeed;
             //Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
-            SoundNotif soundNotif = new SoundNotif();
-            soundNotif.execute();
-            
+            if (checkForNotifications) {
+                SoundNotif soundNotif = new SoundNotif();
+                soundNotif.execute();
+            }
+
             if (roundedCurrentSpeed < 9) {
                 speedValue.setText(String.valueOf(0));
             }
