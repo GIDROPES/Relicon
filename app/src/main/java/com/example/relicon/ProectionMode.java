@@ -177,10 +177,10 @@ public class ProectionMode extends AppCompatActivity implements LocationListener
             float currentSpeed = location.getSpeed() * 3.6f + 5.0f;
             roundedCurrentSpeed = (int) currentSpeed;
             //Log.i("TAGt", "onLocationChanged: " + roundedCurrentSpeed);
-            if (checkForNotifications) {
-                SoundNotif soundNotif = new SoundNotif();
-                soundNotif.execute();
-            }
+            //if (checkForNotifications) {
+              //  SoundNotif soundNotif = new SoundNotif();
+                //soundNotif.execute();
+            //}
 
             if (roundedCurrentSpeed < 9) {
                 speedValue.setText(String.valueOf(0));
